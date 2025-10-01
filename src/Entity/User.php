@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -32,6 +34,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     private ?string $password = null;
+
+    /**
+     * @var Collection<int, Clothe>
+     */
+    #[ORM\OneToMany(targetEntity: Clothe::class, mappedBy: 'user')]
+    private Collection $clothes;
+
+    /**
+     * @var Collection<int, Rent>
+     */
+    #[ORM\OneToMany(targetEntity: Rent::class, mappedBy: 'user')]
+    private Collection $rents;
+
+    public function __construct()
+    {
+        $this->clothes = new ArrayCollection();
+        $this->rents = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -101,5 +121,65 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials(): void
     {
         // @deprecated, to be removed when upgrading to Symfony 8
+    }
+
+    /**
+     * @return Collection<int, Clothe>
+     */
+    public function getClothes(): Collection
+    {
+        return $this->clothes;
+    }
+
+    public function addClothes(Clothe $clothes): static
+    {
+        if (!$this->clothes->contains($clothes)) {
+            $this->clothes->add($clothes);
+            $clothes->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeClothes(Clothe $clothes): static
+    {
+        if ($this->clothes->removeElement($clothes)) {
+            // set the owning side to null (unless already changed)
+            if ($clothes->getUser() === $this) {
+                $clothes->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Rent>
+     */
+    public function getRents(): Collection
+    {
+        return $this->rents;
+    }
+
+    public function addRent(Rent $rent): static
+    {
+        if (!$this->rents->contains($rent)) {
+            $this->rents->add($rent);
+            $rent->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRent(Rent $rent): static
+    {
+        if ($this->rents->removeElement($rent)) {
+            // set the owning side to null (unless already changed)
+            if ($rent->getUser() === $this) {
+                $rent->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }
