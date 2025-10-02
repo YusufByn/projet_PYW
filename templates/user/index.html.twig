@@ -19,7 +19,15 @@
             <tr>
                 <td>{{ user.id }}</td>
                 <td>{{ user.email }}</td>
-                <td>{{ user.roles ? user.roles|json_encode : '' }}</td>
+                <td>
+                    {% for role in user.roles %}
+                        {% if role == 'ROLE_ADMIN' %}
+                        Administrateur
+                        {% elseif role == 'ROLE_USER' %}
+                        Utilisateur
+                        {% endif %}
+                    {% endfor %}
+                </td>
                 <td>
                     <a href="{{ path('app_user_show', {'id': user.id}) }}">Voir</a>
                     <a href="{{ path('app_user_edit', {'id': user.id}) }}">Modifier</a>

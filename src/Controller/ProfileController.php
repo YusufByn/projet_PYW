@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
+
 final class ProfileController extends AbstractController
 {
     #[Route('/profile', name: 'app_profile',  methods: ['GET'])]
@@ -45,6 +46,7 @@ final class ProfileController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
+        /** @var \App\Form\ChangePasswordType $ChangePasswordType */
         // declaration d'une variable form qui est créer un formulaire par rapport a ChangePasswordType et user c'est les infos lié 
         $form = $this->createForm(ChangePasswordType::class, $user);
         // handleRequest c'est une methode pour gérer les requête http 
