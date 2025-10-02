@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Clothe{% endblock %}
+
+{% block body %}
+    <h1>Clothe</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ clothe.id }}</td>
+            </tr>
+            <tr>
+                <th>Title</th>
+                <td>{{ clothe.title }}</td>
+            </tr>
+            <tr>
+                <th>Image</th>
+                <td>
+                    {% if clothe.img %}
+                        <img src="{{ asset('images/' ~ clothe.img) }}" alt="{{ clothe.title }}" style="max-width: 300px; max-height: 300px; object-fit: cover;">
+                    {% else %}
+                        <span class="text-muted">Aucune image</span>
+                    {% endif %}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_clothe_index') }}">back to list</a>
+
+    <a href="{{ path('app_clothe_edit', {'id': clothe.id}) }}">edit</a>
+
+    {{ include('clothe/_delete_form.html.twig') }}
+{% endblock %}
