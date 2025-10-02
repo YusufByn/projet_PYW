@@ -16,6 +16,9 @@ class Rent
     #[ORM\Column]
     private ?\DateTime $dateDebut = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTime $dateFin = null;
+
     #[ORM\Column(length: 50)]
     private ?string $statut = null;
 
@@ -38,6 +41,18 @@ class Rent
     public function setDateDebut(\DateTime $dateDebut): static
     {
         $this->dateDebut = $dateDebut;
+
+        return $this;
+    }
+
+    public function getDateFin(): ?\DateTime
+    {
+        return $this->dateFin;
+    }
+
+    public function setDateFin(?\DateTime $dateFin): static
+    {
+        $this->dateFin = $dateFin;
 
         return $this;
     }

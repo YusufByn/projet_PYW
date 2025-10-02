@@ -37,25 +37,37 @@
 <nav class="navbar fixed-bottom bg-primary text-white d-lg-none">
     <div class="container-fluid">
         <div class="row w-100">
-            <div class="col-3 text-center">
+            <div class="col-2 text-center">
                 <a class="nav-link text-white d-flex flex-column align-items-center" href="{{ path('app_clothe_index') }}">
                     <i class="fas fa-home fs-4"></i>
                     <small>Accueil</small>
                 </a>
             </div>
-            <div class="col-3 text-center">
+            <div class="col-2 text-center">
                 <a class="nav-link text-white d-flex flex-column align-items-center" href="{{ path('app_my_clothes') }}">
                     <i class="fas fa-tshirt fs-4"></i>
                     <small>Mes vêtements</small>
                 </a>
             </div>
-            <div class="col-3 text-center">
+            <div class="col-2 text-center">
+                <a class="nav-link text-white d-flex flex-column align-items-center" href="{{ path('app_my_rents') }}">
+                    <i class="fas fa-hand-holding fs-4"></i>
+                    <small>En cours</small>
+                </a>
+            </div>
+            <div class="col-2 text-center">
+                <a class="nav-link text-white d-flex flex-column align-items-center" href="{{ path('app_rent_history') }}">
+                    <i class="fas fa-history fs-4"></i>
+                    <small>Historique</small>
+                </a>
+            </div>
+            <div class="col-2 text-center">
                 <a class="nav-link text-white d-flex flex-column align-items-center" href="{{ path('app_clothe_new') }}">
                     <i class="fas fa-plus fs-4"></i>
                     <small>Ajouter</small>
                 </a>
             </div>
-            <div class="col-3 text-center">
+            <div class="col-2 text-center">
                 {% if app.user %}
                     <a class="nav-link text-white d-flex flex-column align-items-center" href="http://localhost/projet_PYW/Public/profile">
                         <i class="fas fa-user fs-4"></i>

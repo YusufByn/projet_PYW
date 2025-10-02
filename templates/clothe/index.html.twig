@@ -43,6 +43,20 @@
                     <a href="{{ path('app_clothe_show', {'id': clothe.id}) }}" class="btn btn-sm btn-outline-primary">Voir</a>
                     {% if app.user and app.user == clothe.user %}
                         <a href="{{ path('app_clothe_edit', {'id': clothe.id}) }}" class="btn btn-sm btn-outline-secondary">Modifier</a>
+                    {% elseif app.user and clothe.currentBorrower is null %}
+                        <form method="post" action="{{ path('app_clothe_borrow', {'id': clothe.id}) }}" style="display: inline;">
+                            <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Êtes-vous sûr de vouloir emprunter ce vêtement ?')">
+                                <i class="fas fa-hand-holding"></i> Emprunter
+                            </button>
+                        </form>
+                    {% elseif app.user and clothe.currentBorrower == app.user %}
+                        <form method="post" action="{{ path('app_clothe_return', {'id': clothe.id}) }}" style="display: inline;">
+                            <button type="submit" class="btn btn-sm btn-warning" onclick="return confirm('Êtes-vous sûr de vouloir rendre ce vêtement ?')">
+                                <i class="fas fa-undo"></i> Rendre
+                            </button>
+                        </form>
+                    {% elseif clothe.currentBorrower is not null %}
+                        <span class="badge bg-danger">Emprunté</span>
                     {% endif %}
                 </td>
             </tr>

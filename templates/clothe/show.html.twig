@@ -1,36 +1,71 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Clothe{% endblock %}
+{% block title %}{{ clothe.title }} - PYW{% endblock %}
 
 {% block body %}
-    <h1>Clothe</h1>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            {% if clothe.img %}
+                <img src="{{ asset('images/' ~ clothe.img) }}" alt="{{ clothe.title }}" class="img-fluid rounded">
+            {% else %}
+                <div class="bg-light d-flex align-items-center justify-content-center" style="height: 400px;">
+                    <i class="fas fa-image text-muted fa-5x"></i>
+                </div>
+            {% endif %}
+        </div>
+        <div class="col-md-6">
+            <h1>{{ clothe.title }}</h1>
+            
+            <div class="mb-3">
+                <span class="badge bg-secondary fs-6">{{ clothe.state.name ?? 'Non défini' }}</span>
+                <span class="badge bg-info fs-6">{{ clothe.category.name ?? 'Non définie' }}</span>
+            </div>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ clothe.id }}</td>
-            </tr>
-            <tr>
-                <th>Title</th>
-                <td>{{ clothe.title }}</td>
-            </tr>
-            <tr>
-                <th>Image</th>
-                <td>
-                    {% if clothe.img %}
-                        <img src="{{ asset('images/' ~ clothe.img) }}" alt="{{ clothe.title }}" style="max-width: 300px; max-height: 300px; object-fit: cover;">
-                    {% else %}
-                        <span class="text-muted">Aucune image</span>
-                    {% endif %}
-                </td>
-            </tr>
-        </tbody>
-    </table>
+            <div class="mb-3">
+                <strong>Propriétaire :</strong> {{ clothe.user ? clothe.user.email : 'Non défini' }}
+            </div>
 
-    <a href="{{ path('app_clothe_index') }}">back to list</a>
+            {% if clothe.currentBorrower %}
+                <div class="alert alert-warning">
+                    <i class="fas fa-user"></i> <strong>Emprunté par :</strong> {{ clothe.currentBorrower.email }}
+                </div>
+            {% else %}
+                <div class="alert alert-success">
+                    <i class="fas fa-check"></i> <strong>Disponible</strong>
+                </div>
+            {% endif %}
 
-    <a href="{{ path('app_clothe_edit', {'id': clothe.id}) }}">edit</a>
+            <div class="mt-4">
+                {% if app.user and app.user == clothe.user %}
+                    <a href="{{ path('app_clothe_edit', {'id': clothe.id}) }}" class="btn btn-primary">
+                        <i class="fas fa-edit"></i> Modifier
+                    </a>
+                {% elseif app.user and clothe.currentBorrower is null %}
+                    <form method="post" action="{{ path('app_clothe_borrow', {'id': clothe.id}) }}" style="display: inline;">
+                        <button type="submit" class="btn btn-success btn-lg" onclick="return confirm('Êtes-vous sûr de vouloir emprunter ce vêtement ?')">
+                            <i class="fas fa-hand-holding"></i> Emprunter ce vêtement
+                        </button>
+                    </form>
+                {% elseif app.user and clothe.currentBorrower == app.user %}
+                    <form method="post" action="{{ path('app_clothe_return', {'id': clothe.id}) }}" style="display: inline;">
+                        <button type="submit" class="btn btn-warning btn-lg" onclick="return confirm('Êtes-vous sûr de vouloir rendre ce vêtement ?')">
+                            <i class="fas fa-undo"></i> Rendre ce vêtement
+                        </button>
+                    </form>
+                {% elseif not app.user %}
+                    <div class="alert alert-info">
+                        <a href="{{ path('app_login') }}" class="alert-link">Connectez-vous</a> pour emprunter ce vêtement.
+                    </div>
+                {% endif %}
+            </div>
 
-    {{ include('clothe/_delete_form.html.twig') }}
+            <div class="mt-3">
+                <a href="{{ path('app_clothe_index') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Retour à la liste
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
