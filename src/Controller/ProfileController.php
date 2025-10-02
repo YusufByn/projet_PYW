@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Rent;
 use App\Repository\RentRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,7 +16,7 @@ final class ProfileController extends AbstractController
         $rents = [];
 
         if ($user) {
-            // Emprunts en cours de l'utilisateur connecté
+            // Afficher uniquement les emprunts en cours de l'utilisateur
             $rents = $rentRepository->findBy([
                 'user' => $user,
                 'statut' => 'en_cours',

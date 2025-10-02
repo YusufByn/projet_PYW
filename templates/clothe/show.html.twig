@@ -8,20 +8,22 @@
 
 	<style>
 		.showStatus {
+            border-radius: 5px;
 			background-color: red;
+            padding: 2%;
 		}
 	</style>
-    
+
 	<h1>{{ clothe.title }}</h1>
 
 	<div style="display: flex; flex-direction: row;">
 		{% if clothe.img %}
-			<img style="border: 1px solid red" class="showImg" src="{{ asset('images/' ~ clothe.img) }}" alt="{{ clothe.title }}">
+			<img class="showImg" src="{{ asset('images/' ~ clothe.img) }}" alt="{{ clothe.title }}">
 		{% else %}
 			<p>Aucune image</p>
 		{% endif %}
 
-		<section style="border: 1px solid red">
+		<section>
 			<p>État:
 				<strong>{{ clothe.state.name ?? 'Non défini' }}</strong>
 			</p>

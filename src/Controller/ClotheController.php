@@ -6,6 +6,7 @@ use App\Entity\Clothe;
 use App\Entity\Rent;
 use App\Form\ClotheType;
 use App\Repository\ClotheRepository;
+use App\Repository\RentRepository;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -113,10 +114,9 @@ final class ClotheController extends AbstractController
             return $this->redirectToRoute('app_clothe_show', ['id' => $clothe->getId()]);
         }
 
-        // mettre le clothe en emprunt
+        // mettre le clothe en emprunté par qlq
         $clothe->setCurrentBorrower($user);
 
-        // lancer l'emprunt
         $rent = new Rent;
         $rent->setUser($user);
         $rent->setClothes($clothe);
@@ -127,6 +127,39 @@ final class ClotheController extends AbstractController
         $entityManager->flush();
 
         $this->addFlash('success', 'Vêtement emprunté et retiré du catalogue.');
+        return $this->redirectToRoute('app_profile');
+    }
+
+    #[Route('/return/{id}', name: 'app_clothe_return', methods: ['POST'])]
+    public function returnClothe(Request $request, Clothe $clothe, EntityManagerInterface $entityManager, RentRepository $rentRepository): Response
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        if (!$this->isCsrfTokenValid('return'.$clothe->getId(), $request->getPayload()->getString('_token'))) {
+            $this->addFlash('danger', 'Token CSRF invalide.');
+            return $this->redirectToRoute('app_profile');
+        }
+
+        $rent = $rentRepository->findOneBy([
+            'user' => $user,
+            'clothes' => $clothe,
+            'statut' => 'en_cours',
+        ]);
+
+        if (!$rent) {
+            $this->addFlash('danger', 'Aucun emprunt en cours pour cet article.');
+            return $this->redirectToRoute('app_profile');
+        }
+
+        $clothe->setCurrentBorrower(null);
+        $rent->setStatut('rendu');
+    
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Article rendu et réintégré au catalogue.');
         return $this->redirectToRoute('app_profile');
     }
 }
