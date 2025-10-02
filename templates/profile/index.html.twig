@@ -1,14 +1,54 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mon Profil{% endblock %}
+{% block title %}Mon Profil - PYW{% endblock %}
 
 {% block body %}
-<h1>Bienvenue sur votre profil</h1>
-
-<p>Votre Email :{{ user.email }}</p>
-<p>Votre Rôle :</strong> {{ user.roles|join(', ') }}</p>
-
-
-
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-user"></i> Mon Profil
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5>Informations personnelles</h5>
+                            <hr>
+                            <p><strong>Email :</strong> {{ user.email }}</p>
+                            <p><strong>Rôle :</strong> 
+                                {% if 'ROLE_ADMIN' in user.roles %}
+                                    <span class="badge bg-danger">Administrateur</span>
+                                {% else %}
+                                    <span class="badge bg-primary">Utilisateur</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Actions rapides</h5>
+                            <hr>
+                            <div class="d-grid gap-2">
+                                <a href="{{ path('app_my_clothes') }}" class="btn btn-primary">
+                                    <i class="fas fa-tshirt"></i> Mes Vêtements
+                                </a>
+                                <a href="{{ path('app_clothe_new') }}" class="btn btn-success">
+                                    <i class="fas fa-plus"></i> Ajouter un Vêtement
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 text-center">
+                        <a href="{{ path('app_clothe_index') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-arrow-left"></i> Retour à l'accueil
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 

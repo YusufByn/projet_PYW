@@ -25,8 +25,6 @@ class ClotheType extends AbstractType
                 'required' => false,
             ])
             ->add('img', HiddenType::class)
-            ->add('user', HiddenType::class)
-            ->add('currentBorrower', HiddenType::class)
             ->add('state', EntityType::class, [
                 'class' => State::class,
                 'choice_label' => 'name',
