@@ -1,14 +1,64 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mon Profil{% endblock %}
-
-{% block body %}
-<h1>Bienvenue sur votre profil</h1>
-
-<p>Votre Email :{{ user.email }}</p>
-<p>Votre Rôle :</strong> {{ user.roles|join(', ') }}</p>
-
-
-
+{% block title %}Hello ProfileController!
 {% endblock %}
 
+{% block body %}
+	<style>
+		.example-wrapper {
+			margin: 1em auto;
+			max-width: 800px;
+			width: 95%;
+			font: 18px / 1.5 sans-serif;
+		}
+		.example-wrapper code {
+			background: #F5F5F5;
+			padding: 2px 6px;
+		}
+	</style>
+
+	<div>
+		<h1>Mes emprunts :</h1>
+		<div class="example-wrapper">
+			{% if rents is not empty %}
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Title</th>
+							<th>Image</th>
+							<th>État</th>
+							<th>Catégorie</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for rent in rents %}
+							{% set item = rent.clothes %}
+							<tr>
+								<td>{{ item.title }}</td>
+								<td>
+									{% if item.img %}
+										<img src="{{ asset('images/' ~ item.img) }}" alt="{{ item.title }}" style="width: 100px; height: 100px; object-fit: cover;">
+									{% else %}
+										<span class="text-muted">Aucune image</span>
+									{% endif %}
+								</td>
+								<td>
+									<span class="badge bg-secondary">{{ item.state.name ?? 'Non défini' }}</span>
+								</td>
+								<td>
+									<span class="badge bg-info">{{ item.category.name ?? 'Non définie' }}</span>
+								</td>
+								<td>
+									<a href="{{ path('app_clothe_show', {'id': item.id}) }}" class="btn btn-sm btn-outline-primary">Voir</a>
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			{% else %}
+				<p>Aucun emprunt en cours.</p>
+			{% endif %}
+		</div>
+	</div>
+{% endblock %}

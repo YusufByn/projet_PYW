@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Clothe index{% endblock %}
+
+{% block body %}
+    <h1>Clothe index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Image</th>
+                <th>État</th>
+                <th>Catégorie</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for clothe in clothes %}
+            <tr>
+                <td>{{ clothe.title }}</td>
+                <td>
+                    {% if clothe.img %}
+                        <img src="{{ asset('images/' ~ clothe.img) }}" alt="{{ clothe.title }}" style="width: 100px; height: 100px; object-fit: cover;">
+                    {% else %}
+                        <span class="text-muted">Aucune image</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <span class="badge bg-secondary">{{ clothe.state.name ?? 'Non défini' }}</span>
+                </td>
+                <td>
+                    <span class="badge bg-info">{{ clothe.category.name ?? 'Non définie' }}</span>
+                </td>
+                <td>
+                    <a href="{{ path('app_clothe_show', {'id': clothe.id}) }}" class="btn btn-sm btn-outline-primary">Voir</a>
+                    <a href="{{ path('app_clothe_edit', {'id': clothe.id}) }}" class="btn btn-sm btn-outline-secondary">Modifier</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">Aucun vêtement trouvé</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

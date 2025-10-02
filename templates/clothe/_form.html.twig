@@ -1,0 +1,34 @@
+{{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
+    <div class="mb-3">
+        {{ form_label(form.title, 'Titre', {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.title) }}
+    </div>
+
+    <div class="mb-3">
+        {{ form_label(form.imageFile, 'Image', {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(form.imageFile, {'attr': {'class': 'form-control', 'accept': 'image/*'}}) }}
+        {{ form_errors(form.imageFile) }}
+        {% if clothe.img %}
+            <div class="mt-2">
+                <small class="text-muted">Image actuelle : {{ clothe.img }}</small>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="mb-3">
+        {{ form_label(form.state, 'État', {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(form.state, {'attr': {'class': 'form-select'}}) }}
+        {{ form_errors(form.state) }}
+    </div>
+
+    <div class="mb-3">
+        {{ form_label(form.category, 'Catégorie', {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(form.category, {'attr': {'class': 'form-select'}}) }}
+        {{ form_errors(form.category) }}
+    </div>
+
+    {# Les champs user et currentBorrower sont gérés côté serveur #}
+
+    <button class="btn btn-primary">{{ button_label|default('Enregistrer') }}</button>
+{{ form_end(form) }}

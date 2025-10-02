@@ -2,29 +2,30 @@
 
 namespace App\Controller;
 
+use App\Entity\Rent;
+use App\Repository\RentRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 final class ProfileController extends AbstractController
 {
     #[Route('/profile', name: 'app_profile')]
-    public function profileIndex(): Response
+    public function index(RentRepository $rentRepository): Response
     {
-        // je déclare une variable user qui me permet avec la method getUser qui est dans abstractController
-        // elle me permet bah de prendre l'utilisateur actuel
         $user = $this->getUser();
+        $rents = [];
 
-        // si user est vide donc pas d'utilisateur, on utilise la method redirectToRoute
-        // pour rediriger l'utilisateur sur la page d'enregistrement
-        if (!$user) {
-            return $this->redirectToRoute('app_register');
+        if ($user) {
+            // Emprunts en cours de l'utilisateur connecté
+            $rents = $rentRepository->findBy([
+                'user' => $user,
+                'statut' => 'en_cours',
+            ]);
         }
 
-        // si c'est bon on utilise render donc on envoie dans la view avec la bonne page et les info/data dans un array
         return $this->render('profile/index.html.twig', [
-            'user' => $user,
+            'rents' => $rents,
         ]);
     }
 }
-
