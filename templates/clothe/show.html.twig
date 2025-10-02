@@ -48,7 +48,8 @@
                         </button>
                     </form>
                 {% elseif app.user and clothe.currentBorrower == app.user %}
-                    <form method="post" action="{{ path('app_clothe_return', {'id': clothe.id}) }}" style="display: inline;">
+                    <form method="post" action="{{ path('app_clothe_rendre', {'id': clothe.id}) }}" style="display: inline;">
+                        <input type="hidden" name="_token" value="{{ csrf_token('rendre' ~ clothe.id) }}">
                         <button type="submit" class="btn btn-warning btn-lg" onclick="return confirm('Êtes-vous sûr de vouloir rendre ce vêtement ?')">
                             <i class="fas fa-undo"></i> Rendre ce vêtement
                         </button>

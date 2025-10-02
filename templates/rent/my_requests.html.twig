@@ -33,7 +33,7 @@
                                     </div>
                                     
                                     <p class="text-muted">
-                                        <i class="fas fa-user"></i> Propriétaire : {{ request.owner.email }}
+                                        <i class="fas fa-user"></i> Propriétaire : {{ request.clothes.user ? request.clothes.user.email : 'Non défini' }}
                                     </p>
                                     
                                     <p class="text-muted">

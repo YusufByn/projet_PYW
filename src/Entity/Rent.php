@@ -25,9 +25,6 @@ class Rent
     #[ORM\ManyToOne(inversedBy: 'rents')]
     private ?User $user = null;
 
-    #[ORM\ManyToOne]
-    private ?User $owner = null;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -78,18 +75,6 @@ class Rent
     public function setUser(?User $user): static
     {
         $this->user = $user;
-
-        return $this;
-    }
-
-    public function getOwner(): ?User
-    {
-        return $this->owner;
-    }
-
-    public function setOwner(?User $owner): static
-    {
-        $this->owner = $owner;
 
         return $this;
     }

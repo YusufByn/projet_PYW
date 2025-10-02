@@ -56,7 +56,8 @@
                                         </a>
                                         
                                         {% if rent.statut == 'en_cours' %}
-                                            <form method="post" action="{{ path('app_clothe_return', {'id': rent.clothes.id}) }}" style="display: inline;">
+                                            <form method="post" action="{{ path('app_clothe_rendre', {'id': rent.clothes.id}) }}" style="display: inline;">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('rendre' ~ rent.clothes.id) }}">
                                                 <button type="submit" class="btn btn-warning btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir rendre ce vêtement ?')">
                                                     <i class="fas fa-undo"></i> Rendre
                                                 </button>

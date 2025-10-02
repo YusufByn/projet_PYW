@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\Rent;
+use App\Entity\Clothe;
 use App\Repository\RentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -51,10 +52,19 @@ final class RentController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        $requests = $rentRepository->findBy([
-            'user' => $this->getUser(),
-            'statut' => 'pending'
-        ], ['dateDebut' => 'DESC']);
+        $requests = $rentRepository->createQueryBuilder('r')
+            ->leftJoin('r.clothes', 'c')
+            ->leftJoin('c.user', 'u')
+            ->leftJoin('c.state', 's')
+            ->leftJoin('c.category', 'cat')
+            ->addSelect('c', 'u', 's', 'cat')
+            ->where('r.user = :user')
+            ->andWhere('r.statut = :status')
+            ->setParameter('user', $this->getUser())
+            ->setParameter('status', 'pending')
+            ->orderBy('r.dateDebut', 'DESC')
+            ->getQuery()
+            ->getResult();
 
         return $this->render('rent/my_requests.html.twig', [
             'requests' => $requests,
@@ -69,10 +79,20 @@ final class RentController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        $requests = $rentRepository->findBy([
-            'owner' => $this->getUser(),
-            'statut' => 'pending'
-        ], ['dateDebut' => 'DESC']);
+        // Trouver les demandes où l'utilisateur est le propriétaire du vêtement
+        $requests = $rentRepository->createQueryBuilder('r')
+            ->leftJoin('r.clothes', 'c')
+            ->leftJoin('r.user', 'u')
+            ->leftJoin('c.state', 's')
+            ->leftJoin('c.category', 'cat')
+            ->addSelect('c', 'u', 's', 'cat')
+            ->where('c.user = :owner')
+            ->andWhere('r.statut = :status')
+            ->setParameter('owner', $this->getUser())
+            ->setParameter('status', 'pending')
+            ->orderBy('r.dateDebut', 'DESC')
+            ->getQuery()
+            ->getResult();
 
         return $this->render('rent/received.html.twig', [
             'requests' => $requests,
@@ -115,7 +135,6 @@ final class RentController extends AbstractController
         $rent = new Rent();
         $rent->setClothes($clothe);
         $rent->setUser($this->getUser());
-        $rent->setOwner($clothe->getUser());
         $rent->setDateDebut(new \DateTime());
         $rent->setStatut('pending');
 
@@ -135,7 +154,7 @@ final class RentController extends AbstractController
         }
 
         // Vérifier que l'utilisateur est bien le propriétaire
-        if ($rent->getOwner() !== $this->getUser()) {
+        if ($rent->getClothes()->getUser() !== $this->getUser()) {
             $this->addFlash('error', 'Vous ne pouvez pas approuver cette demande.');
             return $this->redirectToRoute('app_rent_received');
         }
@@ -173,7 +192,7 @@ final class RentController extends AbstractController
         }
 
         // Vérifier que l'utilisateur est bien le propriétaire
-        if ($rent->getOwner() !== $this->getUser()) {
+        if ($rent->getClothes()->getUser() !== $this->getUser()) {
             $this->addFlash('error', 'Vous ne pouvez pas rejeter cette demande.');
             return $this->redirectToRoute('app_rent_received');
         }

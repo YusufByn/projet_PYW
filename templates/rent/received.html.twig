@@ -33,7 +33,7 @@
                                     </div>
                                     
                                     <p class="text-muted">
-                                        <i class="fas fa-user"></i> Demandé par : {{ request.user.email }}
+                                        <i class="fas fa-user"></i> Demandé par : {{ request.user ? request.user.email : 'Non défini' }}
                                     </p>
                                     
                                     <p class="text-muted">
