@@ -8,16 +8,16 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
                 <th>Title</th>
-                <th>Img</th>
-                <th>actions</th>
+                <th>Image</th>
+                <th>État</th>
+                <th>Catégorie</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
         {% for clothe in clothes %}
             <tr>
-                <td>{{ clothe.id }}</td>
                 <td>{{ clothe.title }}</td>
                 <td>
                     {% if clothe.img %}
@@ -27,13 +27,19 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a href="{{ path('app_clothe_show', {'id': clothe.id}) }}">show</a>
-                    <a href="{{ path('app_clothe_edit', {'id': clothe.id}) }}">edit</a>
+                    <span class="badge bg-secondary">{{ clothe.state.name ?? 'Non défini' }}</span>
+                </td>
+                <td>
+                    <span class="badge bg-info">{{ clothe.category.name ?? 'Non définie' }}</span>
+                </td>
+                <td>
+                    <a href="{{ path('app_clothe_show', {'id': clothe.id}) }}" class="btn btn-sm btn-outline-primary">Voir</a>
+                    <a href="{{ path('app_clothe_edit', {'id': clothe.id}) }}" class="btn btn-sm btn-outline-secondary">Modifier</a>
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="4">no records found</td>
+                <td colspan="5">Aucun vêtement trouvé</td>
             </tr>
         {% endfor %}
         </tbody>
