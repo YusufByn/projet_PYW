@@ -17,52 +17,66 @@
 		}
 	</style>
 
-	<div>
-		<h1>Mes emprunts :</h1>
-		<div class="example-wrapper">
-			{% if rents is not empty %}
-				<table class="table">
-					<thead>
-						<tr>
-							<th>Title</th>
-							<th>Image</th>
-							<th>État</th>
-							<th>Catégorie</th>
-							<th>Actions</th>
-						</tr>
-					</thead>
-					<tbody>
-						{% for rent in rents %}
-							{% set item = rent.clothes %}
-							<tr>
-								<td>{{ item.title }}</td>
-								<td>
-									{% if item.img %}
-										<img src="{{ asset('images/' ~ item.img) }}" alt="{{ item.title }}" style="width: 100px; height: 100px; object-fit: cover;">
-									{% else %}
-										<span class="text-muted">Aucune image</span>
-									{% endif %}
-								</td>
-								<td>
-									<span class="badge bg-secondary">{{ item.state.name ?? 'Non défini' }}</span>
-								</td>
-								<td>
-									<span class="badge bg-info">{{ item.category.name ?? 'Non définie' }}</span>
-								</td>
-								<td>
-									<a href="{{ path('app_clothe_show', {'id': item.id}) }}" class="btn btn-sm btn-outline-primary">Voir</a>
-									<form action="{{ path('app_clothe_rendre', {'id': item.id}) }}" method="post" style="display:inline;">
-										<input type="hidden" name="_token" value="{{ csrf_token('rendre' ~ item.id) }}">
-										<button class="btn btn-sm btn-outline-danger">Rendre</button>
-									</form>
-								</td>
-							</tr>
-						{% endfor %}
-					</tbody>
-				</table>
-			{% else %}
-				<p>Aucun emprunt en cours.</p>
-			{% endif %}
+	<div class="container">
+		<div class="row">
+			<div class="col-12">
+				<h1 class="mb-4">Mon Profil</h1>
+				
+				<div class="row">
+					<div class="col-md-6 mb-4">
+						<div class="card">
+							<div class="card-header bg-primary text-white">
+								<h5 class="mb-0"><i class="fas fa-hand-holding"></i> Mes Emprunts</h5>
+							</div>
+							<div class="card-body">
+								{% if rents is not empty %}
+									<p>Vous avez {{ rents|length }} emprunt(s) en cours.</p>
+									<a href="{{ path('app_my_rents') }}" class="btn btn-primary">Voir mes emprunts</a>
+								{% else %}
+									<p>Aucun emprunt en cours.</p>
+									<a href="{{ path('app_clothe_index') }}" class="btn btn-outline-primary">Voir les vêtements</a>
+								{% endif %}
+							</div>
+						</div>
+					</div>
+					
+					<div class="col-md-6 mb-4">
+						<div class="card">
+							<div class="card-header bg-info text-white">
+								<h5 class="mb-0"><i class="fas fa-inbox"></i> Demandes Reçues</h5>
+							</div>
+							<div class="card-body">
+								<p>Gérez les demandes de location de vos vêtements.</p>
+								<a href="{{ path('app_rent_received') }}" class="btn btn-info">Voir les demandes</a>
+							</div>
+						</div>
+					</div>
+					
+					<div class="col-md-6 mb-4">
+						<div class="card">
+							<div class="card-header bg-warning text-white">
+								<h5 class="mb-0"><i class="fas fa-paper-plane"></i> Mes Demandes</h5>
+							</div>
+							<div class="card-body">
+								<p>Suivez vos demandes de location.</p>
+								<a href="{{ path('app_my_requests') }}" class="btn btn-warning">Voir mes demandes</a>
+							</div>
+						</div>
+					</div>
+					
+					<div class="col-md-6 mb-4">
+						<div class="card">
+							<div class="card-header bg-success text-white">
+								<h5 class="mb-0"><i class="fas fa-tshirt"></i> Mes Vêtements</h5>
+							</div>
+							<div class="card-body">
+								<p>Gérez vos vêtements à louer.</p>
+								<a href="{{ path('app_my_clothes') }}" class="btn btn-success">Voir mes vêtements</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 {% endblock %}

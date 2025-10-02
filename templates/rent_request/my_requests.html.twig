@@ -1,0 +1,82 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Demandes - PYW{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>
+                    <i class="fas fa-paper-plane"></i> Mes Demandes
+                </h1>
+                <a href="{{ path('app_profile') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left"></i> Retour au profil
+                </a>
+            </div>
+            
+            {% if requests|length > 0 %}
+                <div class="row">
+                    {% for request in requests %}
+                        <div class="col-md-6 mb-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ request.clothe.title }}</h5>
+                                    
+                                    {% if request.clothe.img %}
+                                        <img src="{{ asset('images/' ~ request.clothe.img) }}" class="img-fluid rounded mb-3" alt="{{ request.clothe.title }}" style="max-height: 200px; object-fit: cover;">
+                                    {% endif %}
+                                    
+                                    <div class="mb-2">
+                                        <span class="badge bg-secondary">{{ request.clothe.state ? request.clothe.state.name : 'Non défini' }}</span>
+                                        <span class="badge bg-info">{{ request.clothe.category ? request.clothe.category.name : 'Non définie' }}</span>
+                                    </div>
+                                    
+                                    <p class="text-muted">
+                                        <i class="fas fa-user"></i> Propriétaire : {{ request.owner.email }}
+                                    </p>
+                                    
+                                    <p class="text-muted">
+                                        <i class="fas fa-calendar"></i> Demande du : {{ request.dateRequest|date('d/m/Y à H:i') }}
+                                    </p>
+                                    
+                                    <div class="mb-3">
+                                        {% if request.status == 'pending' %}
+                                            <span class="badge bg-warning">En attente</span>
+                                        {% elseif request.status == 'approved' %}
+                                            <span class="badge bg-success">Approuvée</span>
+                                        {% elseif request.status == 'rejected' %}
+                                            <span class="badge bg-danger">Rejetée</span>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="d-flex gap-2">
+                                        <a href="{{ path('app_clothe_show', {'id': request.clothe.id}) }}" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-eye"></i> Voir le vêtement
+                                        </a>
+                                        
+                                        {% if request.status == 'approved' %}
+                                            <a href="{{ path('app_my_rents') }}" class="btn btn-success btn-sm">
+                                                <i class="fas fa-hand-holding"></i> Voir mes emprunts
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info text-center">
+                    <i class="fas fa-info-circle fa-2x mb-3"></i>
+                    <h4>Aucune demande envoyée</h4>
+                    <p>Vous n'avez encore fait aucune demande de location.</p>
+                    <a href="{{ path('app_clothe_index') }}" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Voir tous les vêtements
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

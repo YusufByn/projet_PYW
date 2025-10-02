@@ -47,10 +47,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Rent::class, mappedBy: 'user')]
     private Collection $rents;
 
+    /**
+     * @var Collection<int, RentRequest>
+     */
+    #[ORM\OneToMany(targetEntity: RentRequest::class, mappedBy: 'requester')]
+    private Collection $rentRequests;
+
+    /**
+     * @var Collection<int, RentRequest>
+     */
+    #[ORM\OneToMany(targetEntity: RentRequest::class, mappedBy: 'owner')]
+    private Collection $receivedRentRequests;
+
     public function __construct()
     {
         $this->clothes = new ArrayCollection();
         $this->rents = new ArrayCollection();
+        $this->rentRequests = new ArrayCollection();
+        $this->receivedRentRequests = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -177,6 +191,64 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($rent->getUser() === $this) {
                 $rent->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, RentRequest>
+     */
+    public function getRentRequests(): Collection
+    {
+        return $this->rentRequests;
+    }
+
+    public function addRentRequest(RentRequest $rentRequest): static
+    {
+        if (!$this->rentRequests->contains($rentRequest)) {
+            $this->rentRequests->add($rentRequest);
+            $rentRequest->setRequester($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRentRequest(RentRequest $rentRequest): static
+    {
+        if ($this->rentRequests->removeElement($rentRequest)) {
+            if ($rentRequest->getRequester() === $this) {
+                $rentRequest->setRequester(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, RentRequest>
+     */
+    public function getReceivedRentRequests(): Collection
+    {
+        return $this->receivedRentRequests;
+    }
+
+    public function addReceivedRentRequest(RentRequest $receivedRentRequest): static
+    {
+        if (!$this->receivedRentRequests->contains($receivedRentRequest)) {
+            $this->receivedRentRequests->add($receivedRentRequest);
+            $receivedRentRequest->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReceivedRentRequest(RentRequest $receivedRentRequest): static
+    {
+        if ($this->receivedRentRequests->removeElement($receivedRentRequest)) {
+            if ($receivedRentRequest->getOwner() === $this) {
+                $receivedRentRequest->setOwner(null);
             }
         }
 
