@@ -16,7 +16,7 @@
                 </a>
                 
                 {% if app.user %}
-                    <a class="nav-link text-white" href="{{ path('app_profile') }}">
+                    <a class="nav-link text-white" href="#">
                         <i class="fas fa-user"></i> Profil
                     </a>
                 {% else %}
@@ -47,7 +47,7 @@
             </div>
             <div class="col-4 text-center">
                 {% if app.user %}
-                    <a class="nav-link text-white d-flex flex-column align-items-center" href="{{ path('app_profile') }}">
+                    <a class="nav-link text-white d-flex flex-column align-items-center" href="#">
                         <i class="fas fa-user fs-4"></i>
                         <small>Profil</small>
                     </a>
