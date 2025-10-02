@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Profil{% endblock %}
+
+{% block body %}
+<h1>Bienvenue sur votre profil</h1>
+
+<p>Votre Email :{{ user.email }}</p>
+<p>Votre Rôle :</strong> {{ user.roles|join(', ') }}</p>
+
+
+
+{% endblock %}
+
