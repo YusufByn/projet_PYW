@@ -25,6 +25,12 @@ final class ClotheController extends AbstractController
     #[Route('/new', name: 'app_clothe_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        // Vérifier si l'utilisateur est connecté
+        if (!$this->getUser()) {
+            $this->addFlash('error', 'Vous devez être connecté pour ajouter un vêtement.');
+            return $this->redirectToRoute('app_login');
+        }
+
         $clothe = new Clothe();
         
         // Assigner automatiquement l'utilisateur connecté comme propriétaire
@@ -69,6 +75,18 @@ final class ClotheController extends AbstractController
     #[Route('/{id}/edit', name: 'app_clothe_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Clothe $clothe, EntityManagerInterface $entityManager): Response
     {
+        // Vérifier si l'utilisateur est connecté
+        if (!$this->getUser()) {
+            $this->addFlash('error', 'Vous devez être connecté pour modifier un vêtement.');
+            return $this->redirectToRoute('app_login');
+        }
+
+        // Vérifier si l'utilisateur est le propriétaire du vêtement
+        if ($clothe->getUser() !== $this->getUser()) {
+            $this->addFlash('error', 'Vous ne pouvez modifier que vos propres vêtements.');
+            return $this->redirectToRoute('app_clothe_index');
+        }
+
         $form = $this->createForm(ClotheType::class, $clothe);
         $form->handleRequest($request);
 
@@ -87,9 +105,22 @@ final class ClotheController extends AbstractController
     #[Route('/{id}', name: 'app_clothe_delete', methods: ['POST'])]
     public function delete(Request $request, Clothe $clothe, EntityManagerInterface $entityManager): Response
     {
+        // Vérifier si l'utilisateur est connecté
+        if (!$this->getUser()) {
+            $this->addFlash('error', 'Vous devez être connecté pour supprimer un vêtement.');
+            return $this->redirectToRoute('app_login');
+        }
+
+        // Vérifier si l'utilisateur est le propriétaire du vêtement
+        if ($clothe->getUser() !== $this->getUser()) {
+            $this->addFlash('error', 'Vous ne pouvez supprimer que vos propres vêtements.');
+            return $this->redirectToRoute('app_clothe_index');
+        }
+
         if ($this->isCsrfTokenValid('delete'.$clothe->getId(), $request->getPayload()->getString('_token'))) {
             $entityManager->remove($clothe);
             $entityManager->flush();
+            $this->addFlash('success', 'Vêtement supprimé avec succès.');
         }
 
         return $this->redirectToRoute('app_clothe_index', [], Response::HTTP_SEE_OTHER);

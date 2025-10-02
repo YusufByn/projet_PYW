@@ -4,6 +4,13 @@
 
 {% block body %}
     <h1>Clothe index</h1>
+    
+    {% if not app.user %}
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i> 
+            <a href="{{ path('app_login') }}" class="alert-link">Connectez-vous</a> pour ajouter vos propres vêtements à la location.
+        </div>
+    {% endif %}
 
     <table class="table">
         <thead>
@@ -34,7 +41,9 @@
                 </td>
                 <td>
                     <a href="{{ path('app_clothe_show', {'id': clothe.id}) }}" class="btn btn-sm btn-outline-primary">Voir</a>
-                    <a href="{{ path('app_clothe_edit', {'id': clothe.id}) }}" class="btn btn-sm btn-outline-secondary">Modifier</a>
+                    {% if app.user and app.user == clothe.user %}
+                        <a href="{{ path('app_clothe_edit', {'id': clothe.id}) }}" class="btn btn-sm btn-outline-secondary">Modifier</a>
+                    {% endif %}
                 </td>
             </tr>
         {% else %}
