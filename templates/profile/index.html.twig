@@ -49,13 +49,13 @@
 								<td>
 									<span class="badge bg-info">{{ item.category.name ?? 'Non définie' }}</span>
 								</td>
-                <td>
-                    <a href="{{ path('app_clothe_show', {'id': item.id}) }}" class="btn btn-sm btn-outline-primary">Voir</a>
-                    <form action="{{ path('app_clothe_rendre', {'id': item.id}) }}" method="post" style="display:inline;">
-                        <input type="hidden" name="_token" value="{{ csrf_token('rendre' ~ item.id) }}">
-                        <button class="btn btn-sm btn-outline-danger">Rendre</button>
-                    </form>
-                </td>
+								<td>
+									<a href="{{ path('app_clothe_show', {'id': item.id}) }}" class="btn btn-sm btn-outline-primary">Voir</a>
+									<form action="{{ path('app_clothe_rendre', {'id': item.id}) }}" method="post" style="display:inline;">
+										<input type="hidden" name="_token" value="{{ csrf_token('rendre' ~ item.id) }}">
+										<button class="btn btn-sm btn-outline-danger">Rendre</button>
+									</form>
+								</td>
 							</tr>
 						{% endfor %}
 					</tbody>
