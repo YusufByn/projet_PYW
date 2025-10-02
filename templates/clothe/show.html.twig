@@ -1,36 +1,58 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Clothe{% endblock %}
+{% block title %}Clothe
+{% endblock %}
+
 
 {% block body %}
-    <h1>Clothe</h1>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ clothe.id }}</td>
-            </tr>
-            <tr>
-                <th>Title</th>
-                <td>{{ clothe.title }}</td>
-            </tr>
-            <tr>
-                <th>Image</th>
-                <td>
-                    {% if clothe.img %}
-                        <img src="{{ asset('images/' ~ clothe.img) }}" alt="{{ clothe.title }}" style="max-width: 300px; max-height: 300px; object-fit: cover;">
-                    {% else %}
-                        <span class="text-muted">Aucune image</span>
-                    {% endif %}
-                </td>
-            </tr>
-        </tbody>
-    </table>
+	<style>
+		.showStatus {
+            border-radius: 5px;
+			background-color: red;
+            padding: 2%;
+		}
+	</style>
 
-    <a href="{{ path('app_clothe_index') }}">back to list</a>
+	<h1>{{ clothe.title }}</h1>
 
-    <a href="{{ path('app_clothe_edit', {'id': clothe.id}) }}">edit</a>
+	<div style="display: flex; flex-direction: row;">
+		{% if clothe.img %}
+			<img class="showImg" src="{{ asset('images/' ~ clothe.img) }}" alt="{{ clothe.title }}">
+		{% else %}
+			<p>Aucune image</p>
+		{% endif %}
 
-    {{ include('clothe/_delete_form.html.twig') }}
+		<section>
+			<p>État:
+				<strong>{{ clothe.state.name ?? 'Non défini' }}</strong>
+			</p>
+			<p>Catégorie:
+				<strong>{{ clothe.category.name ?? 'Non définie' }}</strong>
+			</p>
+			<p>Propriétaire:
+				<strong>{{ clothe.user ? clothe.user.email : 'Inconnu' }}</strong>
+			</p>
+			<center>
+				{% if clothe.currentBorrower %}
+					<span class="showStatus">Déjà emprunté</span>
+				{% else %}
+					<form action="{{ path('app_clothe_rent', {'id': clothe.id}) }}" method="post">
+						<input type="hidden" name="_token" value="{{ csrf_token('rent' ~ clothe.id) }}">
+						<button class="showStatus type=" submit">Emprunter</button>
+					</form>
+				{% endif %}
+			</center>
+		</section>
+
+	</div>
+
+	<div>
+		<p>
+			<a href="{{ path('app_clothe_index') }}">Retour au catalogue</a>
+			<a href="{{ path('app_clothe_edit', {'id': clothe.id}) }}">Modifier</a>
+		</p>
+	</div>
+
+	{{ include('clothe/_delete_form.html.twig') }}
 {% endblock %}

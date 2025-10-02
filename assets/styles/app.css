@@ -1,3 +1,23 @@
 body {
     background-color: skyblue;
 }
+
+a {
+    list-style: none;
+}
+
+.emprunts {
+    padding: 5%;
+    list-style: none;
+}
+
+.clothesShower {
+    display: flex;
+    justify-content: space-between;
+    min-width: 100vh;
+    border: 1px solid red;
+}
+
+.showImg {
+    width: 30%;
+}

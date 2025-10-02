@@ -1,12 +1,22 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mon Profil{% endblock %}
+{% block title %}Hello ProfileController!
+{% endblock %}
 
 {% block body %}
 <h1>Bienvenue sur votre profil</h1>
 
 <p>Votre Email :{{ user.email }}</p>
-<p>Votre Rôle :</strong> {{ user.roles|join(', ') }}</p>
+<p>votre Rôle :
+{% for role in user.roles %}
+    {% if role == 'ROLE_ADMIN' %}
+        Administrateur
+    {% elseif role == 'ROLE_USER' %}
+        Utilisateur
+    {% endif %}
+{% endfor %}
+</p>
+
 <form action="{{ path('app_profile_change_password') }}" method="GET">
     <button type="submit" class="btn btn-primary">Modifier mon mot de passe</button>
 </form>
@@ -15,4 +25,3 @@
 
 
 {% endblock %}
-

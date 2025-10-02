@@ -16,7 +16,7 @@
                 </a>
                 
                 {% if app.user %}
-                    <a class="nav-link text-white" href="#">
+                    <a class="nav-link text-white" href="{{ path('app_profile') }}">
                         <i class="fas fa-user"></i> Profil
                     </a>
                 {% else %}

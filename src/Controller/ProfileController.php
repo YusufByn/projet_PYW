@@ -16,8 +16,6 @@ final class ProfileController extends AbstractController
     #[Route('/profile', name: 'app_profile',  methods: ['GET'])]
     public function profileIndex(): Response
     {
-        // je déclare une variable user qui me permet avec la method getUser qui est dans abstractController
-        // elle me permet bah de prendre l'utilisateur actuel
         $user = $this->getUser();
 
         // si user est vide donc pas d'utilisateur, on utilise la method redirectToRoute

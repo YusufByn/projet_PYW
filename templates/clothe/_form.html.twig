@@ -28,9 +28,7 @@
         {{ form_errors(form.category) }}
     </div>
 
-    {# Champs cachés pour user et currentBorrower #}
-    {{ form_widget(form.user) }}
-    {{ form_widget(form.currentBorrower) }}
+    {# Les champs user et currentBorrower sont gérés côté serveur #}
 
     <button class="btn btn-primary">{{ button_label|default('Enregistrer') }}</button>
 {{ form_end(form) }}
