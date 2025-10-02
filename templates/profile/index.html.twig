@@ -7,6 +7,10 @@
 
 <p>Votre Email :{{ user.email }}</p>
 <p>Votre Rôle :</strong> {{ user.roles|join(', ') }}</p>
+<form action="{{ path('app_profile_change_password') }}" method="GET">
+    <button type="submit" class="btn btn-primary">Modifier mon mot de passe</button>
+</form>
+
 
 
 

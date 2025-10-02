@@ -11,7 +11,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Security\Http\Attribute\IsGranted; 
+
+// pour pas que l'ide bug sinon il devient fou
+/** @var \App\Entity\User $user */
 
 // #[IsGranted('ROLE_ADMIN')]
 #[Route('/user')]
@@ -56,6 +59,7 @@ final class UserController extends AbstractController
     #[Route('/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, User $user, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
     {
+        
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
