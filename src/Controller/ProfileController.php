@@ -76,10 +76,9 @@ final class ProfileController extends AbstractController
             // Vérifier si l'erreur concerne les mots de passe non identiques
             $errors = $form->getErrors(true);
             foreach ($errors as $error) {
-                if (strpos($error->getMessage(), 'This value is not valid') !== false || 
-                    strpos($error->getMessage(), 'Les valeurs ne correspondent pas') !== false) {
+                if (strpos($error->getMessage(), 'The values do not match') !== false)  {
                     $this->addFlash('error', 'Les mots de passe doivent être identiques');
-                    break;
+                    break; 
                 }
             }
         }
