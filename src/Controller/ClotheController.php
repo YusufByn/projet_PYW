@@ -84,11 +84,32 @@ final class ClotheController extends AbstractController
     #[Route('/{id}/edit', name: 'app_clothe_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Clothe $clothe, EntityManagerInterface $entityManager): Response
     {
+        $user = $this->getUser();
+        if (!$user) {
+            $this->addFlash('error', 'Vous devez être connecté pour modifier un vêtement.');
+            return $this->redirectToRoute('app_login');
+        }
+
+        // Vérifier si l'utilisateur est admin ou propriétaire du vêtement
+        $isAdmin = in_array('ROLE_ADMIN', $user->getRoles());
+        $isOwner = $clothe->getUser() === $user;
+
+        if (!$isAdmin && !$isOwner) {
+            $this->addFlash('error', 'Vous ne pouvez modifier que vos propres vêtements.');
+            return $this->redirectToRoute('app_clothe_index');
+        }
+
         $form = $this->createForm(ClotheType::class, $clothe);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
+
+            if ($isAdmin && !$isOwner) {
+                $this->addFlash('success', 'Vêtement modifié par l\'administrateur.');
+            } else {
+                $this->addFlash('success', 'Vêtement modifié avec succès.');
+            }
 
             return $this->redirectToRoute('app_clothe_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -100,11 +121,39 @@ final class ClotheController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_clothe_delete', methods: ['POST'])]
-    public function delete(Request $request, Clothe $clothe, EntityManagerInterface $entityManager): Response
+    public function delete(Request $request, Clothe $clothe, EntityManagerInterface $entityManager, RentRepository $rentRepository): Response
     {
+        $user = $this->getUser();
+        if (!$user) {
+            $this->addFlash('error', 'Vous devez être connecté pour supprimer un vêtement.');
+            return $this->redirectToRoute('app_login');
+        }
+
+        // Vérifier si l'utilisateur est admin ou propriétaire du vêtement
+        $isAdmin = in_array('ROLE_ADMIN', $user->getRoles());
+        $isOwner = $clothe->getUser() === $user;
+
+        if (!$isAdmin && !$isOwner) {
+            $this->addFlash('error', 'Vous ne pouvez supprimer que vos propres vêtements.');
+            return $this->redirectToRoute('app_clothe_index');
+        }
+
         if ($this->isCsrfTokenValid('delete'.$clothe->getId(), $request->getPayload()->getString('_token'))) {
+            // Supprimer d'abord tous les emprunts associés à ce vêtement
+            $rents = $rentRepository->findBy(['clothes' => $clothe]);
+            foreach ($rents as $rent) {
+                $entityManager->remove($rent);
+            }
+            
+            // Supprimer le vêtement
             $entityManager->remove($clothe);
             $entityManager->flush();
+            
+            if ($isAdmin && !$isOwner) {
+                $this->addFlash('success', 'Vêtement et tous ses emprunts supprimés par l\'administrateur.');
+            } else {
+                $this->addFlash('success', 'Vêtement et tous ses emprunts supprimés avec succès.');
+            }
         }
 
         return $this->redirectToRoute('app_clothe_index', [], Response::HTTP_SEE_OTHER);

@@ -90,6 +90,19 @@
                                            class="btn btn-outline-primary btn-sm">
                                             <i class="fas fa-edit me-1"></i>Modifier
                                         </a>
+                                    {% elseif app.user and 'ROLE_ADMIN' in app.user.roles %}
+                                        <a href="{{ path('app_clothe_edit', {'id': clothe.id}) }}" 
+                                           class="btn btn-warning btn-sm">
+                                            <i class="fas fa-edit me-1"></i>Modifier (Admin)
+                                        </a>
+                                        <form method="post" action="{{ path('app_clothe_delete', {'id': clothe.id}) }}" 
+                                              style="display: inline;"
+                                              onsubmit="return confirm('⚠️ ATTENTION : Supprimer ce vêtement supprimera AUSSI tous ses emprunts (passés et présents). Êtes-vous sûr de vouloir continuer en tant qu\'administrateur ?')">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ clothe.id) }}">
+                                            <button type="submit" class="btn btn-danger btn-sm">
+                                                <i class="fas fa-trash me-1"></i>Supprimer
+                                            </button>
+                                        </form>
                                     {% elseif app.user and clothe.currentBorrower is null %}
                                         <form method="post" action="{{ path('app_rent_request_create', {'id': clothe.id}) }}" 
                                               style="display: inline;">
