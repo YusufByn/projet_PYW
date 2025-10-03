@@ -35,6 +35,14 @@
                             </div>
                             
                             <div class="mb-3">
+                                <label for="{{ registrationForm.username.vars.id }}" class="form-label">
+                                    <i class="fas fa-user me-1"></i>Nom d'utilisateur
+                                </label>
+                                {{ form_widget(registrationForm.username, {'attr': {'class': 'form-control', 'autocomplete': 'username', 'required': true}}) }}
+                                {{ form_errors(registrationForm.username) }}
+                            </div>
+                            
+                            <div class="mb-3">
                                 <label for="{{ registrationForm.plainPassword.vars.id }}" class="form-label">
                                     <i class="fas fa-lock me-1"></i>Mot de passe
                                 </label>

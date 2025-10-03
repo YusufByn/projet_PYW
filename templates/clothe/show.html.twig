@@ -61,7 +61,7 @@
                         <h6 class="text-muted">
                             <i class="fas fa-user me-2"></i>Propriétaire
                         </h6>
-                        <p class="mb-0">{{ clothe.user ? clothe.user.email : 'Non défini' }}</p>
+                        <p class="mb-0">{{ clothe.user ? clothe.user.username : 'Non défini' }}</p>
                     </div>
 
                     <!-- Statut de disponibilité -->
@@ -69,7 +69,7 @@
                         {% if clothe.currentBorrower %}
                             <div class="alert alert-warning">
                                 <i class="fas fa-user me-2"></i>
-                                <strong>Emprunté par :</strong> {{ clothe.currentBorrower.email }}
+                                <strong>Emprunté par :</strong> {{ clothe.currentBorrower.username }}
                             </div>
                         {% else %}
                             <div class="alert alert-success">
