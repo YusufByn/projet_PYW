@@ -24,18 +24,27 @@ final class UserController extends AbstractController
     public function index(UserRepository $userRepository): Response
     {
         return $this->render('user/index.html.twig', [
-            'users' => $userRepository->findAll(),
+            'users' => $userRepository->findAllWithRelations(),
         ]);
     }
 
     #[Route('/new', name: 'app_user_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
     {
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Hasher le mot de passe si fourni
+            $plainPassword = $form->get('plainPassword')->getData();
+            if ($plainPassword) {
+                $user->setPassword($passwordHasher->hashPassword($user, $plainPassword));
+            } else {
+                // Générer un mot de passe temporaire si aucun n'est fourni
+                $user->setPassword($passwordHasher->hashPassword($user, 'temp_password_123'));
+            }
+            
             $entityManager->persist($user);
             $entityManager->flush();
 

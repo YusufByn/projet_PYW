@@ -1,0 +1,45 @@
+<!-- Navigation Mobile - Fixed Bottom -->
+<nav class="mobile-nav d-lg-none">
+    <!-- Accueil -->
+    <a href="{{ path('app_clothe_index') }}" 
+       class="mobile-nav-item {{ app.request.get('_route') == 'app_clothe_index' ? 'active' : '' }}">
+        <i class="fas fa-home mobile-nav-icon"></i>
+        <span class="mobile-nav-label">Accueil</span>
+    </a>
+    
+    <!-- Ajouter un vêtement -->
+    <a href="{{ path('app_clothe_new') }}" 
+       class="mobile-nav-item {{ app.request.get('_route') == 'app_clothe_new' ? 'active' : '' }}">
+        <i class="fas fa-plus-circle mobile-nav-icon"></i>
+        <span class="mobile-nav-label">Ajouter</span>
+    </a>
+    
+    <!-- Administration (pour les admins) -->
+    {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+        <a href="{{ path('app_user_index') }}" 
+           class="mobile-nav-item {{ app.request.get('_route') starts with 'app_user' ? 'active' : '' }}">
+            <i class="fas fa-cog mobile-nav-icon"></i>
+            <span class="mobile-nav-label">Admin</span>
+        </a>
+    {% endif %}
+    
+    <!-- Profil/Connexion/Inscription -->
+    {% if app.user %}
+        <a href="{{ path('app_profile') }}" 
+           class="mobile-nav-item {{ app.request.get('_route') starts with 'app_profile' or app.request.get('_route') starts with 'app_rent' or app.request.get('_route') starts with 'app_my' ? 'active' : '' }}">
+            <i class="fas fa-user-circle mobile-nav-icon"></i>
+            <span class="mobile-nav-label">Profil</span>
+        </a>
+    {% else %}
+        <a href="{{ path('app_register') }}" 
+           class="mobile-nav-item {{ app.request.get('_route') == 'app_register' ? 'active' : '' }}">
+            <i class="fas fa-user-plus mobile-nav-icon"></i>
+            <span class="mobile-nav-label">S'inscrire</span>
+        </a>
+        <a href="{{ path('app_login') }}" 
+           class="mobile-nav-item {{ app.request.get('_route') == 'app_login' ? 'active' : '' }}">
+            <i class="fas fa-sign-in-alt mobile-nav-icon"></i>
+            <span class="mobile-nav-label">Connexion</span>
+        </a>
+    {% endif %}
+</nav>
