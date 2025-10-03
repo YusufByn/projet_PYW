@@ -97,11 +97,15 @@ final class UserController extends AbstractController
             $entityManager->flush();
 
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+            // sinon si le formulaire est soumis mais pas valide
         } elseif ($form->isSubmitted() && !$form->isValid()) {
-            // Vérifier si l'erreur concerne les mots de passe non identiques
+            // on déclare une variable errors qui va chercher des erreur
             $errors = $form->getErrors(true);
+            // on boucle sur les erreurs
             foreach ($errors as $error) {
+                // si l'erreur contient la phrase the values do not match (dans symfony)
                 if (strpos($error->getMessage(), 'The values do not match') !== false) {
+                    // on ajoute une flash message d'erreur avec la method addFlash
                     $this->addFlash('error', 'Les mots de passe doivent être identiques');
                     break;
                 }
