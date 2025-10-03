@@ -53,6 +53,25 @@ final class ClotheController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $imageFile = $form->get('imageFile')->getData();
             if ($imageFile) {
+                // Validation du type de fichier
+                $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                if (!in_array($imageFile->getMimeType(), $allowedTypes)) {
+                    $this->addFlash('error', 'Type de fichier non autorisé. Formats acceptés : JPG, PNG, GIF, WEBP.');
+                    return $this->render('clothe/new.html.twig', [
+                        'clothe' => $clothe,
+                        'form' => $form,
+                    ]);
+                }
+                
+                // Validation de la taille (5MB max)
+                if ($imageFile->getSize() > 5 * 1024 * 1024) {
+                    $this->addFlash('error', 'Le fichier est trop volumineux. Taille maximale : 5MB.');
+                    return $this->render('clothe/new.html.twig', [
+                        'clothe' => $clothe,
+                        'form' => $form,
+                    ]);
+                }
+                
                 $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
                 $newFilename = time().'-'.$originalFilename.'.'.$imageFile->guessExtension();
                 $uploadDir = $this->getParameter('kernel.project_dir').'/public/images';
@@ -159,33 +178,6 @@ final class ClotheController extends AbstractController
         return $this->redirectToRoute('app_clothe_index', [], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route('/rent/{id}', name: 'app_clothe_rent', methods: ['POST'])]
-    public function rent(Request $request, Clothe $clothe, EntityManagerInterface $entityManager): Response
-    {
-        $user = $this->getUser();
-        if (!$user) {
-            return $this->redirectToRoute('app_login');
-        }
-
-        if (!$this->isCsrfTokenValid('rent'.$clothe->getId(), $request->getPayload()->getString('_token'))) {
-            $this->addFlash('danger', 'Token CSRF invalide.');
-            return $this->redirectToRoute('app_clothe_show', ['id' => $clothe->getId()]);
-        }
-
-        $clothe->setCurrentBorrower($user);
-
-        $rent = new Rent;
-        $rent->setUser($user);
-        $rent->setClothes($clothe);
-        $rent->setDateDebut(new DateTime());
-        $rent->setStatut('en_cours');
-
-        $entityManager->persist($rent);
-        $entityManager->flush();
-
-        $this->addFlash('success', 'Emprunt enregistré.');
-        return $this->redirectToRoute('app_profile');
-    }
 
     #[Route('/rendre/{id}', name: 'app_clothe_rendre', methods: ['POST'])]
     public function rendre(Request $request, Clothe $clothe, EntityManagerInterface $entityManager, RentRepository $rentRepository): Response

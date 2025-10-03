@@ -16,7 +16,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 // pour pas que l'ide bug sinon il devient fou
 /** @var \App\Entity\User $user */
 
-// #[IsGranted('ROLE_ADMIN')]
+#[IsGranted('ROLE_ADMIN')]
 #[Route('/user')]
 final class UserController extends AbstractController
 {
@@ -29,13 +29,22 @@ final class UserController extends AbstractController
     }
 
     #[Route('/new', name: 'app_user_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
     {
         $user = new User();
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // Hasher le mot de passe si fourni
+            $plainPassword = $form->get('plainPassword')->getData();
+            if ($plainPassword) {
+                $user->setPassword($passwordHasher->hashPassword($user, $plainPassword));
+            } else {
+                // Générer un mot de passe temporaire si aucun n'est fourni
+                $user->setPassword($passwordHasher->hashPassword($user, 'temp_password_123'));
+            }
+            
             $entityManager->persist($user);
             $entityManager->flush();
 

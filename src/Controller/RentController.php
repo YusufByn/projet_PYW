@@ -104,11 +104,17 @@ class RentController extends AbstractController
     }
 
     #[Route('/create/{id}', name: 'app_rent_request_create', methods: ['POST'])]
-    public function createRequest(Clothe $clothe, EntityManagerInterface $entityManager): Response
+    public function createRequest(Request $request, Clothe $clothe, EntityManagerInterface $entityManager): Response
     {
         if (!$this->getUser()) {
             $this->addFlash('error', 'Vous devez être connecté pour faire une demande.');
             return $this->redirectToRoute('app_login');
+        }
+
+        // Vérification du token CSRF
+        if (!$this->isCsrfTokenValid('rent_request_'.$clothe->getId(), $request->getPayload()->getString('_token'))) {
+            $this->addFlash('error', 'Token CSRF invalide.');
+            return $this->redirectToRoute('app_clothe_show', ['id' => $clothe->getId()]);
         }
 
         // Vérifier que l'utilisateur ne demande pas son propre vêtement

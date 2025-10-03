@@ -112,6 +112,7 @@
                         {% elseif app.user and clothe.currentBorrower is null and clothe.user != app.user %}
                             <!-- Demande d'emprunt -->
                             <form method="post" action="{{ path('app_rent_request_create', {'id': clothe.id}) }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('rent_request_' ~ clothe.id) }}">
                                 <button type="submit" 
                                         class="btn btn-success btn-lg w-100" 
                                         onclick="return confirm('Êtes-vous sûr de vouloir demander à emprunter ce vêtement ?')">
