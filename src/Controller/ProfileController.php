@@ -72,6 +72,16 @@ final class ProfileController extends AbstractController
                 // on redirige vers app_profile (name de la page profile)
                 return $this->redirectToRoute('app_profile');
             }
+        } elseif ($form->isSubmitted() && !$form->isValid()) {
+            // Vérifier si l'erreur concerne les mots de passe non identiques
+            $errors = $form->getErrors(true);
+            foreach ($errors as $error) {
+                if (strpos($error->getMessage(), 'This value is not valid') !== false || 
+                    strpos($error->getMessage(), 'Les valeurs ne correspondent pas') !== false) {
+                    $this->addFlash('error', 'Les mots de passe doivent être identiques');
+                    break;
+                }
+            }
         }
 
         // dans cette instance on nous envoie dans la view profile new password

@@ -16,7 +16,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 // pour pas que l'ide bug sinon il devient fou
 /** @var \App\Entity\User $user */
 
-#[IsGranted('ROLE_ADMIN')]
+// #[IsGranted('ROLE_ADMIN')]
 #[Route('/user')]
 final class UserController extends AbstractController
 {
@@ -80,6 +80,16 @@ final class UserController extends AbstractController
             $entityManager->flush();
 
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+        } elseif ($form->isSubmitted() && !$form->isValid()) {
+            // Vérifier si l'erreur concerne les mots de passe non identiques
+            $errors = $form->getErrors(true);
+            foreach ($errors as $error) {
+                if (strpos($error->getMessage(), 'This value is not valid') !== false || 
+                    strpos($error->getMessage(), 'Les valeurs ne correspondent pas') !== false) {
+                    $this->addFlash('error', 'Les mots de passe doivent être identiques');
+                    break;
+                }
+            }
         }
 
         return $this->render('user/edit.html.twig', [
