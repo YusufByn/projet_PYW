@@ -1,13 +1,33 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit User{% endblock %}
+{% block title %}Modifier Utilisateur - PYW{% endblock %}
 
 {% block body %}
-    <h1>Modifier Utilisateur</h1>
-
-    {{ include('user/_form.html.twig', {'button_label': 'Modifier'}) }}
-
-    <a href="{{ path('app_user_index') }}">Retour à la liste</a>
-
-    {{ include('user/_delete_form.html.twig') }}
+<div class="fade-in-up">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card">
+                <div class="card-header text-center">
+                    <div class="bg-pink rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+                         style="width: 60px; height: 60px;">
+                        <i class="fas fa-user-edit fa-2x text-pink"></i>
+                    </div>
+                    <h3 class="text-pink mb-0">Modifier Utilisateur</h3>
+                </div>
+                
+                <div class="card-body">
+                    {{ include('user/_form.html.twig', {'button_label': 'Modifier'}) }}
+                </div>
+            </div>
+            
+            <div class="mt-4 text-center">
+                <div class="btn-group" role="group">
+                    <a href="{{ path('app_user_index') }}" class="btn" style="background-color: #F8BBD9; color: #8B4A6B; border: 1px solid #E8A3C7;">
+                        <i class="fas fa-arrow-left me-1"></i>Retour à la liste
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

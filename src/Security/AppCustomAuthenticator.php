@@ -52,8 +52,17 @@ class AppCustomAuthenticator extends AbstractLoginFormAuthenticator
             return new RedirectResponse($targetPath);
         }
 
-        // Rediriger vers la page principale après connexion
-        return new RedirectResponse($this->urlGenerator->generate('app_clothe_index'));
+        // Récupérer l'utilisateur connecté
+        $user = $token->getUser();
+        
+        // Rediriger selon le rôle
+        if (in_array('ROLE_ADMIN', $user->getRoles())) {
+            // Admin : rediriger vers la page des vêtements
+            return new RedirectResponse($this->urlGenerator->generate('app_clothe_index'));
+        } else {
+            // Utilisateur normal : rediriger vers la page des vêtements aussi
+            return new RedirectResponse($this->urlGenerator->generate('app_clothe_index'));
+        }
     }
 
     protected function getLoginUrl(Request $request): string

@@ -9,6 +9,7 @@
         <thead>
             <tr>
                 <th>Utilisateur n°</th>
+                <th>Nom d'utilisateur</th>
                 <th>Email</th>
                 <th>Roles</th>
                 <th>actions</th>
@@ -18,6 +19,7 @@
         {% for user in users %}
             <tr>
                 <td>{{ user.id }}</td>
+                <td>{{ user.username }}</td>
                 <td>{{ user.email }}</td>
                 <td>
                     {% for role in user.roles %}
@@ -29,8 +31,14 @@
                     {% endfor %}
                 </td>
                 <td>
-                    <a href="{{ path('app_user_show', {'id': user.id}) }}">Voir</a>
-                    <a href="{{ path('app_user_edit', {'id': user.id}) }}">Modifier</a>
+                    <div class="btn-group" role="group">
+                        <a href="{{ path('app_user_show', {'id': user.id}) }}" class="btn btn-sm me-1" style="background-color: #F8BBD9; color: #8B4A6B; border: 1px solid #E8A3C7;">
+                            <i class="fas fa-eye me-1"></i>Voir
+                        </a>
+                        <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-sm" style="background-color: #F2A6C2; color: #7A3A5C; border: 1px solid #E295B8;">
+                            <i class="fas fa-edit me-1"></i>Modifier
+                        </a>
+                    </div>
                 </td>
             </tr>
         {% else %}
@@ -41,5 +49,7 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_user_new') }}">Créer un nouvel Utilisateur</a>
+    <a href="{{ path('app_user_new') }}" class="btn" style="background-color: #FFB6C1; color: #8B4A6B; border: 1px solid #FFA0B4;">
+        <i class="fas fa-user-plus me-2"></i>Créer un nouvel Utilisateur
+    </a>
 {% endblock %}

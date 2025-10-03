@@ -1,7 +1,28 @@
 {{ form_start(form) }}
-    {{ form_row(form.email) }}
-    {{ form_row(form.roles) }}
-    {{ form_widget(form.plainPassword.first, {'attr': {'class': 'form-control', 'placeholder': 'Nouveau mot de passe'}}) }}
-    {{ form_widget(form.plainPassword.second, {'attr': {'class': 'form-control', 'placeholder': 'Confirmer le mot de passe'}}) }}
-    <button class="btn">{{ button_label|default('Enregistrer') }}</button>
+    <div class="mb-3">
+        <label class="form-label">
+            <i class="fas fa-shield-alt me-1"></i>Rôles
+        </label>
+        {{ form_widget(form.roles, {'attr': {'class': 'form-check'}}) }}
+    </div>
+    
+    <div class="mb-3">
+        <label for="user_plainPassword_first" class="form-label">
+            <i class="fas fa-lock me-1"></i>Nouveau mot de passe
+        </label>
+        {{ form_widget(form.plainPassword.first, {'attr': {'class': 'form-control', 'placeholder': 'Nouveau mot de passe'}}) }}
+    </div>
+    
+    <div class="mb-4">
+        <label for="user_plainPassword_second" class="form-label">
+            <i class="fas fa-lock me-1"></i>Confirmer le mot de passe
+        </label>
+        {{ form_widget(form.plainPassword.second, {'attr': {'class': 'form-control', 'placeholder': 'Confirmer le mot de passe'}}) }}
+    </div>
+    
+    <div class="d-grid">
+        <button type="submit" class="btn" style="background-color: #F2A6C2; color: #7A3A5C; border: 1px solid #E295B8;">
+            <i class="fas fa-save me-2"></i>{{ button_label|default('Enregistrer') }}
+        </button>
+    </div>
 {{ form_end(form, {'render_rest': false}) }}

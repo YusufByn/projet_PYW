@@ -103,6 +103,9 @@ final class UserController extends AbstractController
             // on execute l'envoie des données 
             $entityManager->flush();
 
+            // Ajouter un message flash de succès
+            $this->addFlash('success', 'Utilisateur modifié avec succès !');
+
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
             // sinon si le formulaire est soumis mais pas valide
         } elseif ($form->isSubmitted() && !$form->isValid()) {

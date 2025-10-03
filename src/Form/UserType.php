@@ -15,8 +15,6 @@ class UserType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('email')
-            ->add('username')
             // on ajoute l'objet ChoiceType qui nous permet de faire un choix
             ->add('roles', ChoiceType::class, [
                 // parmis les choix on a utilisateur qui est ROLE_USER et admin qui est ROLE_ADMIN

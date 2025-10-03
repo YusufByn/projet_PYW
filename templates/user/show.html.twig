@@ -12,6 +12,10 @@
                 <td>{{ user.id }}</td>
             </tr>
             <tr>
+                <th>Nom d'utilisateur</th>
+                <td>{{ user.username }}</td>
+            </tr>
+            <tr>
                 <th>Email</th>
                 <td>{{ user.email }}</td>
             </tr>
@@ -30,9 +34,14 @@
         </tbody>
     </table>
 
-    <a href="{{ path('app_user_index') }}">Retour à la liste</a>
-
-    <a href="{{ path('app_user_edit', {'id': user.id}) }}">Modifier</a>
+    <div class="btn-group" role="group">
+        <a href="{{ path('app_user_index') }}" class="btn" style="background-color: #F8BBD9; color: #8B4A6B; border: 1px solid #E8A3C7;">
+            <i class="fas fa-arrow-left me-1"></i>Retour à la liste
+        </a>
+        <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn" style="background-color: #F2A6C2; color: #7A3A5C; border: 1px solid #E295B8;">
+            <i class="fas fa-edit me-1"></i>Modifier
+        </a>
+    </div>
 
     {{ include('user/_delete_form.html.twig') }}
 {% endblock %}
