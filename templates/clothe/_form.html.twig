@@ -1,34 +1,52 @@
-{{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
-    <div class="mb-3">
-        {{ form_label(form.title, 'Titre', {'label_attr': {'class': 'form-label'}}) }}
-        {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
+{{ form_start(form, {'attr': {'enctype': 'multipart/form-data', 'class': 'needs-validation', 'novalidate': true}}) }}
+    <div class="mb-4">
+        {{ form_label(form.title, 'Titre du vêtement', {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(form.title, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Robe d\'été rouge'}}) }}
         {{ form_errors(form.title) }}
     </div>
 
-    <div class="mb-3">
-        {{ form_label(form.imageFile, 'Image', {'label_attr': {'class': 'form-label'}}) }}
+    <div class="mb-4">
+        {{ form_label(form.imageFile, 'Image du vêtement', {'label_attr': {'class': 'form-label'}}) }}
         {{ form_widget(form.imageFile, {'attr': {'class': 'form-control', 'accept': 'image/*'}}) }}
         {{ form_errors(form.imageFile) }}
         {% if clothe.img %}
             <div class="mt-2">
-                <small class="text-muted">Image actuelle : {{ clothe.img }}</small>
+                <div class="alert alert-info">
+                    <i class="fas fa-image me-2"></i>
+                    <strong>Image actuelle :</strong> {{ clothe.img }}
+                </div>
             </div>
         {% endif %}
+        <div class="form-text">
+            <i class="fas fa-info-circle me-1"></i>
+            Formats acceptés : JPG, PNG, GIF. Taille maximale : 5MB
+        </div>
     </div>
 
-    <div class="mb-3">
-        {{ form_label(form.state, 'État', {'label_attr': {'class': 'form-label'}}) }}
-        {{ form_widget(form.state, {'attr': {'class': 'form-select'}}) }}
-        {{ form_errors(form.state) }}
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            {{ form_label(form.state, 'État du vêtement', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.state, {'attr': {'class': 'form-select'}}) }}
+            {{ form_errors(form.state) }}
+        </div>
+
+        <div class="col-md-6 mb-4">
+            {{ form_label(form.category, 'Catégorie', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.category, {'attr': {'class': 'form-select'}}) }}
+            {{ form_errors(form.category) }}
+        </div>
     </div>
 
-    <div class="mb-3">
-        {{ form_label(form.category, 'Catégorie', {'label_attr': {'class': 'form-label'}}) }}
-        {{ form_widget(form.category, {'attr': {'class': 'form-select'}}) }}
-        {{ form_errors(form.category) }}
+    {# Champ caché pour l'image #}
+    {{ form_widget(form.img) }}
+
+    <!-- Boutons d'action -->
+    <div class="d-flex gap-3 justify-content-end">
+        <a href="{{ path('app_clothe_index') }}" class="btn btn-outline-secondary">
+            <i class="fas fa-times me-1"></i>Annuler
+        </a>
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save me-1"></i>{{ button_label|default('Enregistrer') }}
+        </button>
     </div>
-
-    {# Les champs user et currentBorrower sont gérés côté serveur #}
-
-    <button class="btn btn-primary">{{ button_label|default('Enregistrer') }}</button>
 {{ form_end(form) }}
