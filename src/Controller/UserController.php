@@ -27,13 +27,13 @@ final class UserController extends AbstractController
     {
         // dans cette instance tu envoies comme data/info users qui est un findAll dans l'obj userepo
         return $this->render('user/index.html.twig', [
-            'users' => $userRepository->findAll(),
+            'users' => $userRepository->findAllWithRelations(),
         ]);
     }
 
     // page de création d'un nouvelle utilisateur, method get pr afficher et post car on créer avec un form
     #[Route('/new', name: 'app_user_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
     {
         // déclare la variable user qui est une nouvelle instance de mon objet user
         $user = new User();
@@ -45,8 +45,15 @@ final class UserController extends AbstractController
 
         // si le formulaire est soumis et valide
         if ($form->isSubmitted() && $form->isValid()) {
-            // entitymanager c'est ma variable de mon obj eminterface et c'est doctrice mon orm en gros
-            // donc la il persist(préparation d'envoie de donné) avec la variable user donc les infos prise
+            // Hasher le mot de passe si fourni
+            $plainPassword = $form->get('plainPassword')->getData();
+            if ($plainPassword) {
+                $user->setPassword($passwordHasher->hashPassword($user, $plainPassword));
+            } else {
+                // Générer un mot de passe temporaire si aucun n'est fourni
+                $user->setPassword($passwordHasher->hashPassword($user, 'temp_password_123'));
+            }
+            
             $entityManager->persist($user);
             // flush c'est l'éxecution
             $entityManager->flush();

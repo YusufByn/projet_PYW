@@ -1,58 +1,145 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Clothe
-{% endblock %}
-
+{% block title %}{{ clothe.title }} - PYW{% endblock %}
 
 {% block body %}
+<div class="fade-in-up">
+    <!-- Header avec bouton retour -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-pink">
+            <i class="fas fa-tshirt me-2"></i>{{ clothe.title }}
+        </h1>
+        <a href="{{ path('app_clothe_index') }}" class="btn btn-outline-primary">
+            <i class="fas fa-arrow-left me-1"></i>Retour à la liste
+        </a>
+    </div>
 
-	<style>
-		.showStatus {
-            border-radius: 5px;
-			background-color: red;
-            padding: 2%;
-		}
-	</style>
+    <div class="row">
+        <!-- Image du vêtement -->
+        <div class="col-12 col-md-6 mb-4">
+            <div class="card">
+                {% if clothe.img %}
+                    <img src="{{ asset('images/' ~ clothe.img) }}" 
+                         class="card-img-top" 
+                         alt="{{ clothe.title }}" 
+                         style="height: 400px; object-fit: cover;">
+                {% else %}
+                    <div class="bg-pink d-flex align-items-center justify-content-center" 
+                         style="height: 400px;">
+                        <div class="text-center">
+                            <i class="fas fa-image text-pink fa-5x mb-3"></i>
+                            <p class="text-pink">Aucune image disponible</p>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
 
-	<h1>{{ clothe.title }}</h1>
+        <!-- Informations du vêtement -->
+        <div class="col-12 col-md-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Informations
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- Badges d'état et catégorie -->
+                    <div class="mb-4">
+                        <div class="d-flex gap-2 flex-wrap">
+                            <span class="badge bg-secondary fs-6">
+                                <i class="fas fa-tag me-1"></i>{{ clothe.state.name ?? 'Non défini' }}
+                            </span>
+                            <span class="badge bg-info fs-6">
+                                <i class="fas fa-layer-group me-1"></i>{{ clothe.category.name ?? 'Non définie' }}
+                            </span>
+                        </div>
+                    </div>
 
-	<div style="display: flex; flex-direction: row;">
-		{% if clothe.img %}
-			<img class="showImg" src="{{ asset('images/' ~ clothe.img) }}" alt="{{ clothe.title }}">
-		{% else %}
-			<p>Aucune image</p>
-		{% endif %}
+                    <!-- Propriétaire -->
+                    <div class="mb-4">
+                        <h6 class="text-muted">
+                            <i class="fas fa-user me-2"></i>Propriétaire
+                        </h6>
+                        <p class="mb-0">{{ clothe.user ? clothe.user.username : 'Non défini' }}</p>
+                    </div>
 
-		<section>
-			<p>État:
-				<strong>{{ clothe.state.name ?? 'Non défini' }}</strong>
-			</p>
-			<p>Catégorie:
-				<strong>{{ clothe.category.name ?? 'Non définie' }}</strong>
-			</p>
-			<p>Propriétaire:
-				<strong>{{ clothe.user ? clothe.user.email : 'Inconnu' }}</strong>
-			</p>
-			<center>
-				{% if clothe.currentBorrower %}
-					<span class="showStatus">Déjà emprunté</span>
-				{% else %}
-					<form action="{{ path('app_clothe_rent', {'id': clothe.id}) }}" method="post">
-						<input type="hidden" name="_token" value="{{ csrf_token('rent' ~ clothe.id) }}">
-						<button class="showStatus type=" submit">Emprunter</button>
-					</form>
-				{% endif %}
-			</center>
-		</section>
+                    <!-- Statut de disponibilité -->
+                    <div class="mb-4">
+                        {% if clothe.currentBorrower %}
+                            <div class="alert alert-warning">
+                                <i class="fas fa-user me-2"></i>
+                                <strong>Emprunté par :</strong> {{ clothe.currentBorrower.username }}
+                            </div>
+                        {% else %}
+                            <div class="alert alert-success">
+                                <i class="fas fa-check me-2"></i>
+                                <strong>Disponible</strong> pour l'emprunt
+                            </div>
+                        {% endif %}
+                    </div>
 
-	</div>
-
-	<div>
-		<p>
-			<a href="{{ path('app_clothe_index') }}">Retour au catalogue</a>
-			<a href="{{ path('app_clothe_edit', {'id': clothe.id}) }}">Modifier</a>
-		</p>
-	</div>
-
-	{{ include('clothe/_delete_form.html.twig') }}
+                    <!-- Actions -->
+                    <div class="mt-auto">
+                        {% if app.user and app.user == clothe.user %}
+                            <!-- Actions pour le propriétaire -->
+                            <div class="d-flex gap-2 flex-wrap">
+                                <a href="{{ path('app_clothe_edit', {'id': clothe.id}) }}" 
+                                   class="btn btn-primary">
+                                    <i class="fas fa-edit me-1"></i>Modifier
+                                </a>
+                                <a href="{{ path('app_rent_received') }}" 
+                                   class="btn btn-info">
+                                    <i class="fas fa-inbox me-1"></i>Voir les demandes
+                                </a>
+                            </div>
+                        {% elseif app.user and 'ROLE_ADMIN' in app.user.roles %}
+                            <!-- Actions pour l'administrateur -->
+                            <div class="d-flex gap-2 flex-wrap">
+                                <a href="{{ path('app_clothe_edit', {'id': clothe.id}) }}" 
+                                   class="btn btn-warning">
+                                    <i class="fas fa-edit me-1"></i>Modifier (Admin)
+                                </a>
+                                <form method="post" action="{{ path('app_clothe_delete', {'id': clothe.id}) }}" 
+                                      style="display: inline-block;"
+                                      onsubmit="return confirm('⚠️ ATTENTION : Supprimer ce vêtement supprimera AUSSI tous ses emprunts (passés et présents). Êtes-vous sûr de vouloir continuer en tant qu\'administrateur ?')">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ clothe.id) }}">
+                                    <button type="submit" class="btn btn-danger">
+                                        <i class="fas fa-trash me-1"></i>Supprimer (Admin)
+                                    </button>
+                                </form>
+                            </div>
+                        {% elseif app.user and clothe.currentBorrower is null and clothe.user != app.user %}
+                            <!-- Demande d'emprunt -->
+                            <form method="post" action="{{ path('app_rent_request_create', {'id': clothe.id}) }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('rent_request_' ~ clothe.id) }}">
+                                <button type="submit" 
+                                        class="btn btn-success btn-lg w-100" 
+                                        onclick="return confirm('Êtes-vous sûr de vouloir demander à emprunter ce vêtement ?')">
+                                    <i class="fas fa-hand-holding me-2"></i>Demander à emprunter
+                                </button>
+                            </form>
+                        {% elseif app.user and clothe.currentBorrower == app.user %}
+                            <!-- Rendu du vêtement -->
+                            <form method="post" action="{{ path('app_clothe_rendre', {'id': clothe.id}) }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('rendre' ~ clothe.id) }}">
+                                <button type="submit" 
+                                        class="btn btn-warning btn-lg w-100" 
+                                        onclick="return confirm('Êtes-vous sûr de vouloir rendre ce vêtement ?')">
+                                    <i class="fas fa-undo me-2"></i>Rendre ce vêtement
+                                </button>
+                            </form>
+                        {% elseif not app.user %}
+                            <!-- Connexion requise -->
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <a href="{{ path('app_login') }}" class="alert-link">Connectez-vous</a> pour emprunter ce vêtement.
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

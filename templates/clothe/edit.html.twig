@@ -1,13 +1,71 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Clothe{% endblock %}
+{% block title %}Modifier {{ clothe.title }} - PYW{% endblock %}
 
 {% block body %}
-    <h1>Edit Clothe</h1>
+<div class="fade-in-up">
+    <!-- Header avec bouton retour -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-pink">
+            <i class="fas fa-edit me-2"></i>
+            {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+                Modifier (Admin) - {{ clothe.title }}
+            {% else %}
+                Modifier - {{ clothe.title }}
+            {% endif %}
+        </h1>
+        <a href="{{ path('app_clothe_index') }}" class="btn btn-outline-primary">
+            <i class="fas fa-arrow-left me-1"></i>Retour à la liste
+        </a>
+    </div>
 
-    {{ include('clothe/_form.html.twig', {'button_label': 'Update'}) }}
-
-    <a href="{{ path('app_clothe_index') }}">back to list</a>
-
-    {{ include('clothe/_delete_form.html.twig') }}
+    <!-- Formulaire de modification -->
+    <div class="row">
+        <div class="col-12 col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-edit me-2"></i>Modifier les informations
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {{ include('clothe/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Actions -->
+        <div class="col-12 col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-cog me-2"></i>Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{{ path('app_clothe_show', {'id': clothe.id}) }}" class="btn btn-primary">
+                            <i class="fas fa-eye me-1"></i>Voir le vêtement
+                        </a>
+                        
+                        {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <strong>Mode Admin :</strong> Vous modifiez ce vêtement en tant qu'administrateur.
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Bouton de suppression -->
+                        <div class="mt-3">
+                            <h6 class="text-danger mb-2">
+                                <i class="fas fa-exclamation-triangle me-1"></i>Zone dangereuse
+                            </h6>
+                            {{ include('clothe/_delete_form.html.twig') }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

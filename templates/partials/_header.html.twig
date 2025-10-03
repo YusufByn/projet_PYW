@@ -1,21 +1,33 @@
 <!-- Header Desktop -->
-<header class="bg-primary text-white py-3 d-none d-lg-block">
+<header class="desktop-header">
     <div class="container">
         <nav class="navbar navbar-expand-lg">
-            <a class="navbar-brand text-white fw-bold" href="{{ path('app_clothe_index') }}">
-                PYW
+            <a class="navbar-brand" href="{{ path('app_clothe_index') }}">
+                <i class="fas fa-tshirt me-2"></i>PYW
             </a>
             
             <div class="navbar-nav ms-auto">
-                <a class="nav-link text-white me-3" href="{{ path('app_clothe_index') }}">
-                    <i class="fas fa-home"></i> Accueil
+                <a class="nav-link me-3" href="{{ path('app_clothe_index') }}">
+                    <i class="fas fa-home me-1"></i> Accueil
                 </a>
-                <a class="nav-link text-white me-3" href="{{ path('app_clothe_new') }}">
-                    <i class="fas fa-plus"></i> Ajouter un vêtement
+                
+                <a class="nav-link me-3" href="{{ path('app_clothe_new') }}">
+                    <i class="fas fa-plus me-1"></i> Ajouter un vêtement
                 </a>
                 {% if app.user %}
-                    <a class="nav-link text-white me-3" href="{{ path('app_profile') }}">
-                        <i class="fas fa-user"></i> Profil
+                    <a class="nav-link me-3" href="{{ path('app_my_rents') }}">
+                        <i class="fas fa-hand-holding me-1"></i> Mes emprunts
+                    </a>
+                    <a class="nav-link me-3" href="{{ path('app_rent_history') }}">
+                        <i class="fas fa-history me-1"></i> Historique
+                    </a>
+                    {% if 'ROLE_ADMIN' in app.user.roles %}
+                        <a class="nav-link me-3" href="{{ path('app_user_index') }}">
+                            <i class="fas fa-cog me-1"></i> Administration
+                        </a>
+                    {% endif %}
+                    <a class="nav-link" href="{{ path('app_profile') }}">
+                        <i class="fas fa-user me-1"></i> Profil
                     </a>
                     <form action="{{ path('app_logout') }}" method="post" style="display:inline;">
                         <button class="btn btn-link text-white nav-link" type="submit">
@@ -23,8 +35,11 @@
                         </button>
                     </form>
                 {% else %}
-                    <a class="nav-link text-white me-3" href="{{ path('app_login') }}">
-                        <i class="fas fa-sign-in-alt"></i> Connexion
+                    <a class="nav-link me-3" href="{{ path('app_register') }}">
+                        <i class="fas fa-user-plus me-1"></i> S'inscrire
+                    </a>
+                    <a class="nav-link" href="{{ path('app_login') }}">
+                        <i class="fas fa-sign-in-alt me-1"></i> Connexion
                     </a>
                     <a class="nav-link text-white" href="{{ path('app_register') }}">
                         S'inscrire
@@ -34,36 +49,3 @@
         </nav>
     </div>
 </header>
-
-<!-- Navigation Mobile - Fixed Bottom -->
-<nav class="navbar fixed-bottom bg-primary text-white d-lg-none">
-    <div class="container-fluid">
-        <div class="row w-100">
-            <div class="col-4 text-center">
-                <a class="nav-link text-white d-flex flex-column align-items-center" href="{{ path('app_clothe_index') }}">
-                    <i class="fas fa-home fs-4"></i>
-                    <small>Accueil</small>
-                </a>
-            </div>
-            <div class="col-4 text-center">
-                <a class="nav-link text-white d-flex flex-column align-items-center" href="{{ path('app_clothe_new') }}">
-                    <i class="fas fa-plus fs-4"></i>
-                    <small>Ajouter</small>
-                </a>
-            </div>
-            <div class="col-4 text-center">
-                {% if app.user %}
-                    <a class="nav-link text-white d-flex flex-column align-items-center" href="#">
-                        <i class="fas fa-user fs-4"></i>
-                        <small>Profil</small>
-                    </a>
-                {% else %}
-                    <a class="nav-link text-white d-flex flex-column align-items-center" href="{{ path('app_login') }}">
-                        <i class="fas fa-sign-in-alt fs-4"></i>
-                        <small>Connexion</small>
-                    </a>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-</nav>

@@ -2,8 +2,8 @@
 
 namespace App\Controller;
 
-
 use App\Form\ChangePasswordType;
+use App\Repository\RentRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,7 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 final class ProfileController extends AbstractController
 {
     #[Route('/profile', name: 'app_profile',  methods: ['GET'])]
-    public function profileIndex(): Response
+    public function profileIndex(RentRepository $rentRepository): Response
     {
         $user = $this->getUser();
 
@@ -25,9 +25,13 @@ final class ProfileController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
+        // Récupérer les emprunts en cours de l'utilisateur
+        $rents = $rentRepository->findUserRentsWithRelations($user, 'en_cours');
+
         // si c'est bon on utilise render donc on envoie dans la view avec la bonne page et les info/data dans un array
         return $this->render('profile/index.html.twig', [
             'user' => $user,
+            'rents' => $rents,
         ]);
     }
 

@@ -18,7 +18,11 @@ class ClotheType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('title')
+            ->add('title', null, [
+                'attr' => [
+                    'placeholder' => 'Gros slip sale'
+                ]
+            ])
             ->add('imageFile', FileType::class, [
                 'label' => 'Image',
                 'mapped' => false,
