@@ -16,47 +16,53 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 // pour pas que l'ide bug sinon il devient fou
 /** @var \App\Entity\User $user */
 
+// IsGranted controle qui a accès a la page user ici c'est l'admin
 #[IsGranted('ROLE_ADMIN')]
 #[Route('/user')]
 final class UserController extends AbstractController
-{
+{   
+    // method get, c'est la page qui montre tous les utilisateurs
     #[Route(name: 'app_user_index', methods: ['GET'])]
     public function index(UserRepository $userRepository): Response
     {
+        // dans cette instance tu envoies comme data/info users qui est un findAll dans l'obj userepo
         return $this->render('user/index.html.twig', [
             'users' => $userRepository->findAllWithRelations(),
         ]);
     }
 
+    // page de création d'un nouvelle utilisateur, method get pr afficher et post car on créer avec un form
     #[Route('/new', name: 'app_user_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
     {
+        // déclare la variable user qui est une nouvelle instance de mon objet user
         $user = new User();
+        // déclare la variable form dans cette instance créer moi un formulaire avec la method createform
+        // par rapport a UserType et user c'est les infos lié 
         $form = $this->createForm(UserType::class, $user);
+        // handleRequest c'est une methode pour gérer les requête http 
         $form->handleRequest($request);
 
+        // si le formulaire est soumis et valide
         if ($form->isSubmitted() && $form->isValid()) {
-            // Hasher le mot de passe si fourni
-            $plainPassword = $form->get('plainPassword')->getData();
-            if ($plainPassword) {
-                $user->setPassword($passwordHasher->hashPassword($user, $plainPassword));
-            } else {
-                // Générer un mot de passe temporaire si aucun n'est fourni
-                $user->setPassword($passwordHasher->hashPassword($user, 'temp_password_123'));
-            }
-            
+            // entitymanager c'est ma variable de mon obj eminterface et c'est doctrice mon orm en gros
+            // donc la il persist(préparation d'envoie de donné) avec la variable user donc les infos prise
             $entityManager->persist($user);
+            // flush c'est l'éxecution
             $entityManager->flush();
 
+            // une fois que c'est fait on redirige sur la page app_user_index (qui est la page ou on a tous les utilisateurs)
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
         }
 
+        // on retourne les infos suivantes dans la vue
         return $this->render('user/new.html.twig', [
             'user' => $user,
             'form' => $form,
         ]);
     }
 
+    // slug avec l'id ici pour montrer un user en tapant son num avec la method get
     #[Route('/{id}', name: 'app_user_show', methods: ['GET'])]
     public function show(User $user): Response
     {
@@ -65,6 +71,7 @@ final class UserController extends AbstractController
         ]);
     }
 
+    // slug/modifier un utilisateur 
     #[Route('/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, User $user, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
     {
@@ -86,9 +93,19 @@ final class UserController extends AbstractController
             $user->setPassword($hashed);
             }
 
+            // on execute l'envoie des données 
             $entityManager->flush();
 
             return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
+        } elseif ($form->isSubmitted() && !$form->isValid()) {
+            // Vérifier si l'erreur concerne les mots de passe non identiques
+            $errors = $form->getErrors(true);
+            foreach ($errors as $error) {
+                if (strpos($error->getMessage(), 'The values do not match') !== false) {
+                    $this->addFlash('error', 'Les mots de passe doivent être identiques');
+                    break;
+                }
+            }
         }
 
         return $this->render('user/edit.html.twig', [

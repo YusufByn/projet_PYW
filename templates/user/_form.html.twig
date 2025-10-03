@@ -1,4 +1,7 @@
 {{ form_start(form) }}
-    {{ form_widget(form) }}
+    {{ form_row(form.email) }}
+    {{ form_row(form.roles) }}
+    {{ form_widget(form.plainPassword.first, {'attr': {'class': 'form-control', 'placeholder': 'Nouveau mot de passe'}}) }}
+    {{ form_widget(form.plainPassword.second, {'attr': {'class': 'form-control', 'placeholder': 'Confirmer le mot de passe'}}) }}
     <button class="btn">{{ button_label|default('Enregistrer') }}</button>
-{{ form_end(form) }}
+{{ form_end(form, {'render_rest': false}) }}

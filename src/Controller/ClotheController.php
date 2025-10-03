@@ -40,20 +40,6 @@ final class ClotheController extends AbstractController
         ]);
     }
 
-    #[Route('/my-clothes', name: 'app_my_clothes', methods: ['GET'])]
-    public function myClothes(ClotheRepository $clotheRepository): Response
-    {
-        if (!$this->getUser()) {
-            $this->addFlash('error', 'Vous devez être connecté pour voir vos vêtements.');
-            return $this->redirectToRoute('app_login');
-        }
-
-        $clothes = $clotheRepository->findByUser($this->getUser());
-
-        return $this->render('clothe/my_clothes.html.twig', [
-            'clothes' => $clothes,
-        ]);
-    }
 
     #[Route('/new', name: 'app_clothe_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response

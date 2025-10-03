@@ -1,0 +1,19 @@
+# Redirection vers le dossier public pour Symfony
+RewriteEngine On
+
+# Rediriger toutes les requêtes vers le dossier public
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteCond %{REQUEST_URI} !^/vendor/
+RewriteCond %{REQUEST_URI} !^/src/
+RewriteCond %{REQUEST_URI} !^/config/
+RewriteCond %{REQUEST_URI} !^/templates/
+RewriteCond %{REQUEST_URI} !^/migrations/
+RewriteCond %{REQUEST_URI} !^/assets/
+RewriteCond %{REQUEST_URI} !^/var/
+RewriteCond %{REQUEST_URI} !^/bin/
+RewriteCond %{REQUEST_URI} !^/composer.json
+RewriteCond %{REQUEST_URI} !^/composer.lock
+RewriteCond %{REQUEST_URI} !^/symfony.lock
+RewriteCond %{REQUEST_URI} !^/README.md
+RewriteCond %{REQUEST_URI} !^/\.htaccess$
+RewriteRule ^(.*)$ /public/$1 [L,R=301]
