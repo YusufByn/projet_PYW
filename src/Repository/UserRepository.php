@@ -33,20 +33,20 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
-    //    /**
-    //     * @return User[] Returns an array of User objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('u.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * Trouve tous les utilisateurs avec leurs relations (clothes, rents)
+     * Évite les N+1 queries du findAll()
+     */
+    public function findAllWithRelations(): array
+    {
+        return $this->createQueryBuilder('u')
+            ->leftJoin('u.clothes', 'c')
+            ->leftJoin('u.rents', 'r')
+            ->addSelect('u', 'c', 'r')
+            ->orderBy('u.email', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 
     //    public function findOneBySomeField($value): ?User
     //    {

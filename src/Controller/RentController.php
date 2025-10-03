@@ -21,10 +21,7 @@ class RentController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        $rents = $rentRepository->findBy([
-            'user' => $this->getUser(),
-            'statut' => 'en_cours'
-        ], ['dateDebut' => 'DESC']);
+        $rents = $rentRepository->findUserRentsWithRelations($this->getUser(), 'en_cours');
 
         return $this->render('rent/my_rents.html.twig', [
             'rents' => $rents,
@@ -39,9 +36,7 @@ class RentController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        $rents = $rentRepository->findBy([
-            'user' => $this->getUser()
-        ], ['dateDebut' => 'DESC']);
+        $rents = $rentRepository->findUserHistoryWithRelations($this->getUser());
 
         return $this->render('rent/history.html.twig', [
             'rents' => $rents,
@@ -56,19 +51,7 @@ class RentController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        $requests = $rentRepository->createQueryBuilder('r')
-            ->leftJoin('r.clothes', 'c')
-            ->leftJoin('c.user', 'u')
-            ->leftJoin('c.state', 's')
-            ->leftJoin('c.category', 'cat')
-            ->addSelect('c', 'u', 's', 'cat')
-            ->where('r.user = :user')
-            ->andWhere('r.statut = :status')
-            ->setParameter('user', $this->getUser())
-            ->setParameter('status', 'pending')
-            ->orderBy('r.dateDebut', 'DESC')
-            ->getQuery()
-            ->getResult();
+        $requests = $rentRepository->findUserRequestsWithRelations($this->getUser());
 
         return $this->render('rent/my_requests.html.twig', [
             'requests' => $requests,
@@ -84,19 +67,7 @@ class RentController extends AbstractController
         }
 
         // Trouver les demandes où l'utilisateur est le propriétaire du vêtement
-        $requests = $rentRepository->createQueryBuilder('r')
-            ->leftJoin('r.clothes', 'c')
-            ->leftJoin('r.user', 'u')
-            ->leftJoin('c.state', 's')
-            ->leftJoin('c.category', 'cat')
-            ->addSelect('c', 'u', 's', 'cat')
-            ->where('c.user = :owner')
-            ->andWhere('r.statut = :status')
-            ->setParameter('owner', $this->getUser())
-            ->setParameter('status', 'pending')
-            ->orderBy('r.dateDebut', 'DESC')
-            ->getQuery()
-            ->getResult();
+        $requests = $rentRepository->findReceivedRequestsWithRelations($this->getUser());
 
         return $this->render('rent/received.html.twig', [
             'requests' => $requests,

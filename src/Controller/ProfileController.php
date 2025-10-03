@@ -26,10 +26,7 @@ final class ProfileController extends AbstractController
         }
 
         // Récupérer les emprunts en cours de l'utilisateur
-        $rents = $rentRepository->findBy([
-            'user' => $user,
-            'statut' => 'en_cours'
-        ], ['dateDebut' => 'DESC']);
+        $rents = $rentRepository->findUserRentsWithRelations($user, 'en_cours');
 
         // si c'est bon on utilise render donc on envoie dans la view avec la bonne page et les info/data dans un array
         return $this->render('profile/index.html.twig', [

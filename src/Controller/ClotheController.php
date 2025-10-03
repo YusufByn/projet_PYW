@@ -21,7 +21,7 @@ final class ClotheController extends AbstractController
     public function index(ClotheRepository $clotheRepository): Response
     {
         return $this->render('clothe/index.html.twig', [
-            'clothes' => $clotheRepository->findBy(['currentBorrower' => null]),
+            'clothes' => $clotheRepository->findAvailableClothesWithRelations(),
         ]);
     }
 
@@ -33,7 +33,7 @@ final class ClotheController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        $clothes = $clotheRepository->findByUser($this->getUser());
+        $clothes = $clotheRepository->findByUserWithRelations($this->getUser());
 
         return $this->render('clothe/my_clothes.html.twig', [
             'clothes' => $clothes,
@@ -159,7 +159,7 @@ final class ClotheController extends AbstractController
 
         if ($this->isCsrfTokenValid('delete'.$clothe->getId(), $request->getPayload()->getString('_token'))) {
             // Supprimer d'abord tous les emprunts associés à ce vêtement
-            $rents = $rentRepository->findBy(['clothes' => $clothe]);
+            $rents = $rentRepository->findClothesRentsWithRelations($clothe);
             foreach ($rents as $rent) {
                 $entityManager->remove($rent);
             }
@@ -192,11 +192,7 @@ final class ClotheController extends AbstractController
             return $this->redirectToRoute('app_profile');
         }
 
-        $rent = $rentRepository->findOneBy([
-            'user' => $user,
-            'clothes' => $clothe,
-            'statut' => 'en_cours',
-        ]);
+        $rent = $rentRepository->findUserClotheRentWithRelations($user, $clothe, 'en_cours');
 
         if (!$rent) {
             $this->addFlash('danger', 'Aucun emprunt en cours pour cet article.');

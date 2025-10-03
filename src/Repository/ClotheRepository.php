@@ -30,6 +30,37 @@ class ClotheRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findAvailableClothesWithRelations(): array
+    {
+        return $this->createQueryBuilder('c')
+        ->leftJoin('c.user', 'u')
+        ->leftJoin('c.state', 's')
+        ->leftJoin('c.category', 'cat')
+        ->addSelect('c', 'u', 's', 'cat')
+        ->andWhere('c.currentBorrower IS NULL')
+        ->orderBy('c.title', 'ASC')
+        ->getQuery()
+        ->getResult();
+    }
+
+    /**
+     * Trouve tous les vêtements d'un utilisateur avec leurs relations
+     */
+    public function findByUserWithRelations(User $user): array
+    {
+        return $this->createQueryBuilder('c')
+            ->leftJoin('c.user', 'u')
+            ->leftJoin('c.state', 's')
+            ->leftJoin('c.category', 'cat')
+            ->leftJoin('c.rents', 'r')
+            ->addSelect('c', 'u', 's', 'cat', 'r')
+            ->where('c.user = :user')
+            ->setParameter('user', $user)
+            ->orderBy('c.title', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Clothe[] Returns an array of Clothe objects
     //     */
