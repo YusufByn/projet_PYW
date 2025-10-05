@@ -43,8 +43,18 @@ final class ClotheController extends AbstractController
     #[Route('/new', name: 'app_clothe_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+
+        // création d'une variable user qui va bah aller chercher si un utilisateur est connecé 
+        $user = $this->getUser();
+
+        // condition : si pas d'uuser on envoie un msg d'erreur et on redirige sur la page de login
+        if (!$user) {
+            $this->addFlash('error', 'Vous devez être connecté pour créer un vêtement.');
+            return $this->redirectToRoute('app_login');
+        }
+
         $clothe = new Clothe();
-        $clothe->setUser($this->getUser());
+        $clothe->setUser($user);
         $clothe->setCurrentBorrower(null);
         
         $form = $this->createForm(ClotheType::class, $clothe);
