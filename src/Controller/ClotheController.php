@@ -158,15 +158,6 @@ final class ClotheController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        // Vérifier si l'utilisateur est admin ou propriétaire du vêtement
-        $isAdmin = in_array('ROLE_ADMIN', $user->getRoles());
-        $isOwner = $clothe->getUser() === $user;
-
-        if (!$isAdmin && !$isOwner) {
-            $this->addFlash('error', 'Vous ne pouvez supprimer que vos propres vêtements.');
-            return $this->redirectToRoute('app_clothe_index');
-        }
-
         if ($this->isCsrfTokenValid('delete'.$clothe->getId(), $request->getPayload()->getString('_token'))) {
             // Supprimer d'abord tous les emprunts associés à ce vêtement
             $rents = $rentRepository->findClothesRentsWithRelations($clothe);
@@ -178,11 +169,7 @@ final class ClotheController extends AbstractController
             $entityManager->remove($clothe);
             $entityManager->flush();
             
-            if ($isAdmin && !$isOwner) {
-                $this->addFlash('success', 'Vêtement et tous ses emprunts supprimés par l\'administrateur.');
-            } else {
-                $this->addFlash('success', 'Vêtement et tous ses emprunts supprimés avec succès.');
-            }
+            $this->addFlash('success', 'Vêtement et tous ses emprunts supprimés avec succès.');
         }
 
         return $this->redirectToRoute('app_clothe_index', [], Response::HTTP_SEE_OTHER);

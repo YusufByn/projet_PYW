@@ -81,20 +81,8 @@
 
                     <!-- Actions -->
                     <div class="mt-auto">
-                        {% if app.user and app.user == clothe.user %}
-                            <!-- Actions pour le propriétaire -->
-                            <div class="d-flex gap-2 flex-wrap">
-                                <a href="{{ path('app_clothe_edit', {'id': clothe.id}) }}" 
-                                   class="btn btn-primary">
-                                    <i class="fas fa-edit me-1"></i>Modifier
-                                </a>
-                                <a href="{{ path('app_rent_received') }}" 
-                                   class="btn btn-info">
-                                    <i class="fas fa-inbox me-1"></i>Voir les demandes
-                                </a>
-                            </div>
-                        {% elseif app.user and 'ROLE_ADMIN' in app.user.roles %}
-                            <!-- Actions pour l'administrateur -->
+                        {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
+                            <!-- Actions pour l'administrateur (priorité) -->
                             <div class="d-flex gap-2 flex-wrap">
                                 <a href="{{ path('app_clothe_edit', {'id': clothe.id}) }}" 
                                    class="btn btn-warning">
@@ -108,6 +96,24 @@
                                         <i class="fas fa-trash me-1"></i>Supprimer (Admin)
                                     </button>
                                 </form>
+                                {% if app.user == clothe.user %}
+                                    <a href="{{ path('app_rent_received') }}" 
+                                       class="btn btn-info">
+                                        <i class="fas fa-inbox me-1"></i>Voir les demandes
+                                    </a>
+                                {% endif %}
+                            </div>
+                        {% elseif app.user and app.user == clothe.user %}
+                            <!-- Actions pour le propriétaire (non-admin) -->
+                            <div class="d-flex gap-2 flex-wrap">
+                                <a href="{{ path('app_clothe_edit', {'id': clothe.id}) }}" 
+                                   class="btn btn-primary">
+                                    <i class="fas fa-edit me-1"></i>Modifier
+                                </a>
+                                <a href="{{ path('app_rent_received') }}" 
+                                   class="btn btn-info">
+                                    <i class="fas fa-inbox me-1"></i>Voir les demandes
+                                </a>
                             </div>
                         {% elseif app.user and clothe.currentBorrower is null and clothe.user != app.user %}
                             <!-- Demande d'emprunt -->

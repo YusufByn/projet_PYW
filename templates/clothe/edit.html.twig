@@ -14,9 +14,14 @@
                 Modifier - {{ clothe.title }}
             {% endif %}
         </h1>
-        <a href="{{ path('app_clothe_index') }}" class="btn btn-outline-primary">
-            <i class="fas fa-arrow-left me-1"></i>Retour à la liste
-        </a>
+        <div class="d-flex gap-2">
+            <button onclick="supprimerVetement()" class="btn btn-danger" style="background-color: #dc3545 !important; color: white !important; border: 1px solid #dc3545 !important; padding: 8px 16px !important; font-size: 14px !important; display: inline-block !important; visibility: visible !important; opacity: 1 !important;">
+                <i class="fas fa-trash me-1"></i>Supprimer
+            </button>
+            <a href="{{ path('app_clothe_index') }}" class="btn btn-outline-primary">
+                <i class="fas fa-arrow-left me-1"></i>Retour à la liste
+            </a>
+        </div>
     </div>
 
     <!-- Formulaire de modification -->
@@ -60,7 +65,13 @@
                             <h6 class="text-danger mb-2">
                                 <i class="fas fa-exclamation-triangle me-1"></i>Zone dangereuse
                             </h6>
-                            {{ include('clothe/_delete_form.html.twig') }}
+                            <form method="post" action="{{ path('app_clothe_delete', {'id': clothe.id}) }}" 
+                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce vêtement ?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ clothe.id) }}">
+                                <button type="submit" class="btn btn-danger w-100">
+                                    <i class="fas fa-trash me-1"></i>Supprimer ce vêtement
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -68,4 +79,25 @@
         </div>
     </div>
 </div>
+
+<script>
+function supprimerVetement() {
+    if (confirm('Êtes-vous sûr de vouloir supprimer ce vêtement ?')) {
+        // Créer un formulaire dynamiquement
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{{ path("app_clothe_delete", {"id": clothe.id}) }}';
+        
+        // Ajouter le token CSRF
+        const tokenInput = document.createElement('input');
+        tokenInput.type = 'hidden';
+        tokenInput.name = '_token';
+        tokenInput.value = '{{ csrf_token("delete" ~ clothe.id) }}';
+        
+        form.appendChild(tokenInput);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+</script>
 {% endblock %}

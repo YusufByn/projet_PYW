@@ -1,12 +1,7 @@
 <form method="post" action="{{ path('app_clothe_delete', {'id': clothe.id}) }}" 
-      onsubmit="return confirm('{% if app.user and 'ROLE_ADMIN' in app.user.roles %}⚠️ ATTENTION : Supprimer ce vêtement supprimera AUSSI tous ses emprunts (passés et présents). Êtes-vous sûr de vouloir continuer en tant qu\'administrateur ?{% else %}Êtes-vous sûr de vouloir supprimer ce vêtement ?{% endif %}');">
+      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce vêtement ?');">
     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ clothe.id) }}">
     <button class="btn btn-danger">
-        <i class="fas fa-trash me-1"></i>
-        {% if app.user and 'ROLE_ADMIN' in app.user.roles %}
-            Supprimer (Admin)
-        {% else %}
-            Supprimer
-        {% endif %}
+        <i class="fas fa-trash me-1"></i>Supprimer
     </button>
 </form>
